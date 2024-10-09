@@ -1,0 +1,33 @@
+body {
+    background-color: #f8f9fa; /* Màu nền cho toàn bộ trang */
+}
+
+.login-container {
+    max-width: 400px; /* Độ rộng tối đa của container */
+    width: 100%; /* Đảm bảo nó chiếm 100% chiều rộng nếu nhỏ hơn */
+    background-color: white; /* Màu nền trắng cho form đăng nhập */
+    border-radius: 10px; /* Bo tròn các góc */
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1); /* Bóng đổ nhẹ cho container */
+}
+
+h1 {
+    font-size: 24px; /* Kích thước chữ cho tiêu đề */
+    font-weight: bold; /* Đậm chữ tiêu đề */
+    color: #ff6f61; /* Màu chữ tiêu đề */
+}
+
+.btn-primary {
+    background-color: #ff6f61; /* Màu nền cho nút Đăng Nhập */
+    border-color: #ff6f61; /* Màu viền cho nút */
+}
+
+/* Thay đổi màu khi hover */
+.btn-primary:hover {
+    background-color: #e65c50; /* Tối màu khi hover */
+    border-color: #e65c50; /* Tối màu viền khi hover */
+}
+
+.text-center {
+    color: #6c757d; /* Màu chữ cho phần thông báo */
+    font-size: 14px; /* Kích thước chữ cho phần thông báo */
+}
