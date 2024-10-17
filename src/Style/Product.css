@@ -1,0 +1,291 @@
+/* Đặt nền và bố cục cho trang */
+.background {
+  background-color: #e2e3e3;
+  min-height: 100vh;
+}
+
+.product_page {
+  display: flex;
+  flex-direction: column;
+  margin-left: 330px;
+  /* Thêm padding cho khoảng cách bên trong */
+}
+
+/* Bố cục header */
+.header {
+  width: 100%;
+  height: 100px;
+  /* Điều chỉnh chiều cao header */
+  background-color: white;
+  display: flex;
+  align-items: center;
+  /* Căn giữa theo chiều dọc */
+  position: relative;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  /* Thêm bóng cho header */
+}
+
+.search-bar {
+  margin-left: 32px;
+}
+
+.search-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-icon {
+  position: absolute;
+  left: 10px;
+  width: 20px;
+  height: 20px;
+  pointer-events: none;
+}
+
+.search-input-wrapper input {
+  padding-left: 40px;
+  width: 400px;
+  /* Điều chỉnh chiều rộng cho phù hợp */
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  height: 44px;
+  outline: none;
+  /* Bỏ đường viền khi input được chọn */
+  transition: border-color 0.3s;
+  /* Hiệu ứng chuyển tiếp cho viền */
+}
+
+.search-input-wrapper input:focus {
+  border-color: #007bff;
+  /* Màu viền khi input được chọn */
+}
+
+.header .icon_box1 {
+  position: absolute;
+  right: 32px;
+  display: flex;
+  align-items: center;
+}
+
+.icon20 {
+  width: 16px;
+  height: 16px;
+  margin-bottom: -3px;
+  margin-right: 5px;
+}
+
+.icon24 {
+  width: 24px;
+  height: 24px;
+  margin-right: 10px;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* Bố cục cho bảng sản phẩm */
+.product-container {
+  margin-top: 14px;
+  background-color: white;
+  border-radius: 5px;
+  /* Thêm bo góc cho container sản phẩm */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  /* Thêm bóng cho container */
+  padding: 20px;
+  /* Thêm padding cho khoảng cách bên trong */
+}
+
+.table-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.table-header button {
+  height: 44px;
+  width: 104px;
+  margin-left: 12px;
+  background-color: white;
+  border-color: #5D6679;
+  border-radius: 5%;
+  color: #5D6679;
+  font-size: 14px;
+  align-items: center;
+  justify-content: center;
+}
+
+.table-header .btn-add {
+  background-color: #F15E2B;
+  border: none;
+  color: white;
+}
+
+.text_sp {
+  font-size: 20px;
+  font-weight: bold;
+  color: #383E49;
+}
+
+table thead {
+  background-color: #ffffff;
+  /* Đặt màu nền cho thead */
+}
+
+/* Bố cục bảng sản phẩm */
+.product-table {
+  width: 100%;
+  border-collapse: collapse;
+  /* Gộp các viền bảng */
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.product-table th,
+.product-table td {
+  padding: 5px;
+  /* Thêm khoảng cách cho các ô */
+  text-align: left;
+  /* Căn trái cho nội dung */
+  border-bottom: 1px solid #ddd;
+  /* Thêm viền dưới cho các ô */
+}
+
+.product-table th {
+  background-color: #f4f4f4;
+  /* Màu nền cho tiêu đề bảng */
+}
+
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  /* Căn giữa các nút điều hướng */
+  margin-top: 20px;
+  /* Khoảng cách trên cho phân trang */
+}
+
+.btn-action {
+  border: none;
+  background-color: transparent;
+  /* Nền trong suốt cho nút hành động */
+  cursor: pointer;
+  /* Thay đổi con trỏ khi di chuột */
+}
+
+.btn-action {
+  width: 24px;
+  /* Đặt chiều rộng */
+  height: px;
+  /* Đặt chiều cao */
+  background-size: cover;
+  /* Đảm bảo hình ảnh phủ hết nút */
+}
+
+.status-available {
+  color: green;
+  /* Màu chữ cho trạng thái còn hàng */
+}
+
+.status-out {
+  color: red;
+  /* Màu chữ cho trạng thái hết hàng */
+}
+
+.pagination button {
+  width: 78px;
+  height: 38px;
+  background-color: white;
+  border-color: #5D6679;
+  border-radius: 5%;
+  color: #5D6679;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Màu nền mờ cho modal */
+  display: flex;
+  justify-content: center; /* Canh giữa theo chiều ngang */
+  align-items: center;     /* Canh giữa theo chiều dọc */
+  z-index: 1000;           /* Đảm bảo modal nằm phía trên */
+}
+
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 483px;
+  height: 610px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Đổ bóng cho modal */
+  animation: fadeIn 0.3s ease-in-out; /* Hiệu ứng xuất hiện */
+  overflow-y: scroll; /* Cho phép cuộn dọc */
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px); /* Bắt đầu từ vị trí cao hơn */
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);     /* Đưa về vị trí ban đầu */
+  }
+}
+
+.image-upload {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.image-placeholder {
+  border: 2px dashed #ccc;
+  padding: 20px;
+  cursor: pointer;
+}
+
+.product-image-preview {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  margin-bottom: 10px;
+}
+
+.modal-content input {
+  margin-bottom: 10px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100%;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: space-between;
+}
+
+.modal-actions button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.modal-actions button[type="submit"] {
+  background-color: #ff5e00;
+  color: white;
+}
+
+.modal-actions button[type="button"] {
+  background-color: #ccc;
+}

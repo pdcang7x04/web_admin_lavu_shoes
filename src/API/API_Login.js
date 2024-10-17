@@ -18,7 +18,7 @@ const handleLogin = async (email, password) => {
         if (result.status) {
             if (result.data.role == 2) {
                 success()
-                // window.location.href = '/Product';
+                window.location.href = '/sidebar';
             } else {
                 warning()
             }

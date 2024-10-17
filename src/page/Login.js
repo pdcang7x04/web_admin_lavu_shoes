@@ -37,14 +37,14 @@ const Login = () => {
               onChange={e => setPassword(e.target.value)}
             />
           </div>
-          <button 
-            type="button" 
-            className="btn btn-primary" 
+          <button
+            type="button"
+            className="btn btn-primary"
             style={styles.button}
             onClick={() => handleLogin(Email, Password)}
           >
             Đăng Nhập
-            </button>
+          </button>
         </form>
       </div>
     </div>
