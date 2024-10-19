@@ -64,7 +64,7 @@ const sidebarStyles = {
     color: '#FFFFFF', // Màu chữ trắng
   },
   ul2: {
-    marginTop: '150px',
+    marginTop: '100px',
     listStyleType: 'none',
     padding: 0,
   },
