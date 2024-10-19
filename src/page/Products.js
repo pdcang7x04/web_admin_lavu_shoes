@@ -151,13 +151,13 @@ const ProductList = () => {
 
 
         {/* Modal thêm sản phẩm */}
-        {isModalOpen && (
+        {isModalOpen == true && (
           <div className="modal">
             <div className="modal-content">
               <h3>Thêm Sản Phẩm</h3>
               <div className="image-upload">
-                {newProduct.image ? (
-                  <img src={URL.createObjectURL(newProduct.image)} alt="Product" className="product-image-preview" />
+                {newProduct.images ? (
+                  <img src={URL.createObjectURL(newProduct.images)} alt="Product" className="product-image-preview" />
                 ) : (
                   <div className="image-placeholder">
                     <p>Kéo hình ảnh vào đây</p>

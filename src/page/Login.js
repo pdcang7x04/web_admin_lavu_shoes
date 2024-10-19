@@ -2,6 +2,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { useState } from 'react';
 import logo from '../img/logo.png'; // Đường dẫn đến file logo (đảm bảo đường dẫn chính xác)
 import { handleLogin } from '../API/API_Login';
+import { validateEmail, validatePassword } from '../middlewares/Validate';
 
 
 
@@ -9,6 +10,12 @@ const Login = () => {
 
   const [Email, setEmail] = useState('phamdinhcang350@gmail.com')
   const [Password, setPassword] = useState('Admin@123')
+
+  const login = () => {
+    if(validateEmail(Email) == true && validatePassword(Password)){
+      handleLogin(Email, Password)
+    }
+  }
 
   return (
     <div style={styles.loginPage}>
@@ -41,7 +48,7 @@ const Login = () => {
             type="button"
             className="btn btn-primary"
             style={styles.button}
-            onClick={() => handleLogin(Email, Password)}
+            onClick={() => login()}
           >
             Đăng Nhập
           </button>

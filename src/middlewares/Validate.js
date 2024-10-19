@@ -1,4 +1,5 @@
 import { Alert } from "bootstrap";
+import { warning } from "../swal/Swal";
 
 const isEmail = (email) => {
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -7,10 +8,10 @@ const isEmail = (email) => {
 
 export const validateEmail = (email) => {
     if (!email.trim()) {
-        showToast('Email is required');
+        warning('Email không được để trống');
         return false;
     } else if (!isEmail(email)) {
-        showToast('Email is not valid');
+        warning('Email không đúng định dạng');
         return false;
     }
     return true;
@@ -24,19 +25,16 @@ const isPassword = (password) => {
 
 export const validatePassword = (password) => {
     if (!password.trim()) {
-        showToast('Password is required');
+        warning('Mật khẩu không được để trống');
         return false;
     } else if (password.length < 8) {
-        showToast('Password must be at least 8 characters');
+        warning('Mật khẩu không được nhỏ hơn 8 ký tự');
         return false;
     } else if (!isPassword(password)) {
-        showToast('Password must be at least 8 characters, including uppercase, lowercase, numbers and special characters');
+        warning('Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt');
         return false;
     }
     return true;
 }
 
 
-function showToast(message) {
-    Alert(message)
-}

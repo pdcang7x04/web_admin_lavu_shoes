@@ -1,19 +1,19 @@
 import Swal from "sweetalert2";
 
-export const warning = () => {
+export const warning = (message) => {
     Swal.fire({
         position: "center",
         icon: "warning",
-        title: "Invalid access permission!",
+        title: message,
         showConfirmButton: false,
         timer: 1500
     });
 }
-export const success = () => {
+export const success = (message) => {
     Swal.fire({
         position: "center",
         icon: "success",
-        title: "Invalid access permission!",
+        title: message,
         showConfirmButton: false,
         timer: 1500
     });

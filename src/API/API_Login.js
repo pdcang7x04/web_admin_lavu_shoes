@@ -17,11 +17,12 @@ const handleLogin = async (email, password) => {
         console.log(result);
         if (result.status) {
             if (result.data.role == 2) {
-                success()
                 window.location.href = '/sidebar';
             } else {
-                warning()
+                warning('Bạn không phải là admin')
             }
+        }else{
+            warning("Tài khoản hoặc mật khẩu sai")
         }
     } catch (error) {
         console.log(error);
