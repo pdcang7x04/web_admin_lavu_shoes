@@ -3,14 +3,16 @@ import Sidebar from './Sidepart';
 import '../Style/Order.css';
 
 const Order = () => {
-  const [orders, setorders] = useState([]);
+  const [orders, setOrders] = useState([]);
   const [Page, setPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [newOrder, setNewOrder] = useState({ id: null, name: '' });
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+  const [newOrder, setNewOrder] = useState({ id: null, customerName: '', orderDate: '', productCount: '', status: '' });
+  const [selectedProduct, setSelectedProduct] = useState(null);
 
   useEffect(() => {
-    const fetchorders = async () => {
-      const fetchedorders = [
+    const fetchOrders = async () => {
+      const fetchedOrders = [
         { id: 1, customerName: 'Customer 1', orderDate: '2022-11-12', productCount: 4, status: 'Đã giao hàng' },
         { id: 2, customerName: 'Customer 2', orderDate: '2022-12-21', productCount: 2, status: 'Đang xử lý' },
         { id: 3, customerName: 'Customer 3', orderDate: '2022-05-12', productCount: 6, status: 'Đã hủy' },
@@ -18,33 +20,31 @@ const Order = () => {
         { id: 5, customerName: 'Customer 5', orderDate: '2023-09-23', productCount: 5, status: 'Đã giao hàng' },
         { id: 6, customerName: 'Customer 6', orderDate: '2023-09-23', productCount: 1, status: 'Đã hủy' },
       ];
-      setorders(fetchedorders);
+      setOrders(fetchedOrders);
     };
 
-    fetchorders();
+    fetchOrders();
   }, []);
 
   const handleAddOrEditOrder = () => {
     if (newOrder.id) {
-      setorders(orders.map(cat => cat.id === newOrder.id ? newOrder : cat));
+      setOrders(orders.map(order => order.id === newOrder.id ? newOrder : order));
     } else {
-      const newId = orders.length ? Math.max(orders.map(cat => cat.id)) + 1 : 1;
-      setorders([...orders, { ...newOrder, id: newId }]);
+      const newId = orders.length ? Math.max(orders.map(order => order.id)) + 1 : 1;
+      setOrders([...orders, { ...newOrder, id: newId }]);
     }
     setIsModalOpen(false);
-    setNewOrder({ id: null, name: '' });
+    setNewOrder({ id: null, customerName: '', orderDate: '', productCount: '', status: '' });
   };
 
-  const handleEditOrder = (Order) => {
-    setNewOrder(Order);
+  const handleEditOrder = (order) => {
+    setNewOrder(order);
     setIsModalOpen(true);
   };
 
-  const handleDeleteOrder = (id) => {
-    const confirmDelete = window.confirm("Bạn có chắc chắn muốn xóa danh mục này?");
-    if (confirmDelete) {
-      setorders(orders.filter(cat => cat.id !== id));
-    }
+  const handleViewProduct = (product) => {
+    setSelectedProduct(product);
+    setIsViewModalOpen(true);
   };
 
   return (
@@ -86,21 +86,21 @@ const Order = () => {
               </tr>
             </thead>
             <tbody>
-              {orders.map((Order) => (
-                <tr key={Order.id}>
-                  <td>{Order.id}</td>
-                  <td>{Order.customerName}</td>
-                  <td>{Order.orderDate}</td>
-                  <td>{Order.productCount}</td>
-                  <td className={`${Order.status === 'Đã giao hàng' ? 'completed' : Order.status === 'Đang xử lý' ? 'processing' : 'cancelled'}`}>
-                    {Order.status}
+              {orders.map((order) => (
+                <tr key={order.id}>
+                  <td>{order.id}</td>
+                  <td>{order.customerName}</td>
+                  <td>{order.orderDate}</td>
+                  <td>{order.productCount}</td>
+                  <td className={`${order.status === 'Đã giao hàng' ? 'completed' : order.status === 'Đang xử lý' ? 'processing' : 'cancelled'}`}>
+                    {order.status}
                   </td>
                   <td>
-                    <button className="btn-action edit" onClick={() => handleEditOrder(Order)}>
+                    <button className="btn-action edit" onClick={() => handleEditOrder(order)}>
                       <img className="icon24" src={require('../img/edit.png')} alt="edit" />
                     </button>
-                    <button className="btn-action delete" onClick={() => handleDeleteOrder(Order.id)}>
-                      <img className="icon24" src={require('../img/delete.png')} alt="delete" />
+                    <button className="btn-action view" onClick={() => handleViewProduct(order)}>
+                      <img className="icon24" src={require('../img/image.png')} alt="view" />
                     </button>
                   </td>
                 </tr>
@@ -125,21 +125,66 @@ const Order = () => {
         {isModalOpen && (
           <div className="modal">
             <div className="modal-content">
-              <h3>{newOrder.id ? "Chỉnh Sửa Danh Mục" : "Thêm Danh Mục"}</h3>
+              <h3>{newOrder.id ? "Chỉnh Sửa Đơn Hàng" : "Thêm Đơn Hàng"}</h3>
               <form onSubmit={(e) => { e.preventDefault(); handleAddOrEditOrder(); }}>
-                <label>Tên Danh Mục</label>
+                <label>ID Người Mua</label>
                 <input
                   type="text"
-                  value={newOrder.name}
-                  onChange={(e) => setNewOrder({ ...newOrder, name: e.target.value })}
-                  placeholder="Nhập Tên Danh Mục"
+                  value={newOrder.customerName}
+                  onChange={(e) => setNewOrder({ ...newOrder, customerName: e.target.value })}
+                  placeholder="Nhập Tên Người Mua"
                   required
                 />
+                <label>Ngày Đặt Hàng</label>
+                <input
+                  type="date"
+                  value={newOrder.orderDate}
+                  onChange={(e) => setNewOrder({ ...newOrder, orderDate: e.target.value })}
+                  required
+                />
+                <label>Tổng Số Sản Phẩm</label>
+                <input
+                  type="number"
+                  value={newOrder.productCount}
+                  onChange={(e) => setNewOrder({ ...newOrder, productCount: e.target.value })}
+                  placeholder="Nhập Số Sản Phẩm"
+                  required
+                />
+                <label>Tình Trạng</label>
+                <select
+                  value={newOrder.status}
+                  onChange={(e) => setNewOrder({ ...newOrder, status: e.target.value })}
+                  required
+                >
+                  <option value="">Chọn Tình Trạng</option>
+                  <option value="Đã giao hàng">Đã giao hàng</option>
+                  <option value="Đang xử lý">Đang xử lý</option>
+                  <option value="Đã hủy">Đã hủy</option>
+                  <option value="Đang giao hàng">Đang giao hàng</option>
+                </select>
+                
                 <div className="modal-actions">
                   <button type="button" onClick={() => setIsModalOpen(false)}>Hủy</button>
                   <button type="submit">{newOrder.id ? "Cập Nhật" : "Thêm"}</button>
                 </div>
               </form>
+            </div>
+          </div>
+        )}
+
+        {isViewModalOpen && selectedProduct && (
+          <div className="modal">
+            <div className="modal-content">
+              <h3>Chi Tiết Sản Phẩm</h3>
+              <p><strong>ID Đơn Hàng:</strong> {selectedProduct.id}</p>
+              <p><strong>ID Người Mua:</strong> {selectedProduct.customerName}</p>
+              <p><strong>Ngày Đặt Hàng:</strong> {selectedProduct.orderDate}</p>
+              <p><strong>Tổng Số Sản Phẩm:</strong> {selectedProduct.productCount}</p>
+              <p><strong>Tình Trạng:</strong> {selectedProduct.status}</p>
+              
+              <div className="modal-actions">
+                <button type="button" onClick={() => setIsViewModalOpen(false)}>Đóng</button>
+              </div>
             </div>
           </div>
         )}

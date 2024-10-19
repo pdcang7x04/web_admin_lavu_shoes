@@ -41,7 +41,7 @@ const Account = () => {
   };
 
   const handleDeleteAccount = (id) => {
-    const confirmDelete = window.confirm("Bạn có chắc chắn muốn xóa danh mục này?");
+    const confirmDelete = window.confirm("Bạn có chắc chắn muốn xóa Tài Khoản này?");
     if (confirmDelete) {
       setaccounts(accounts.filter(cat => cat.id !== id)); // Xóa danh mục
     }
@@ -128,14 +128,35 @@ const Account = () => {
         {isModalOpen && (
           <div className="modal">
             <div className="modal-content">
-              <h3>{newAccount.id ? "Chỉnh Sửa Danh Mục" : "Thêm Danh Mục"}</h3>
+              <h3>{newAccount.id ? "Chỉnh Sửa Account" : "Thêm Danh Mục"}</h3>
               <form onSubmit={(e) => { e.preventDefault(); handleAddOrEditAccount(); }}>
-                <label>Tên Danh Mục</label>
+                <label>Account</label>
                 <input
                   type="text"
                   value={newAccount.name}
                   onChange={(e) => setNewAccount({ ...newAccount, name: e.target.value })}
-                  placeholder="Nhập Tên Danh Mục"
+                  placeholder="Nhập Tên Người Dùng"
+                  required
+                />
+                <input
+                  type="text"
+                  value={newAccount.password}
+                  onChange={(e) => setNewAccount({ ...newAccount, name: e.target.value })}
+                  placeholder="Mật Khẩu"
+                  required
+                />
+                <input
+                  type="text"
+                  value={newAccount.phonenumber}
+                  onChange={(e) => setNewAccount({ ...newAccount, name: e.target.value })}
+                  placeholder="Số Điện Thoại"
+                  required
+                />
+                <input
+                  type="text"
+                  value={newAccount.Email}
+                  onChange={(e) => setNewAccount({ ...newAccount, name: e.target.value })}
+                  placeholder="Email"
                   required
                 />
                 <div className="modal-actions">
