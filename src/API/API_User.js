@@ -2,10 +2,10 @@ import Swal from 'sweetalert2'
 import { success, warning } from '../swal/Swal';
 
 
-const getBrand = async (page, limit, keywords) => {
+const getUser = async (page, limit, keywords) => {
     try {
         const response = await fetch(
-            `http://localhost:3000/brands/getBrandByQuery?page=${page}&limit=${limit}&keywords=${keywords}`,
+            `http://localhost:3000/users/getUser?page=${page}&limit=${limit}&keywords=${keywords}`,
             {
                 method: 'GET',
                 headers: { 'Content-Type': 'application/json' },
@@ -21,4 +21,4 @@ const getBrand = async (page, limit, keywords) => {
     }
 }
 
-export { getBrand };
+export { getUser };

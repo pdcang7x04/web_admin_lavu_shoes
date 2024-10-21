@@ -1,26 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import Sidebar from './Sidepart'; // Đường dẫn tới thành phần Sidebar
 import '../Style/Account.css'; // Đường dẫn tới file CSS của bạn
+import { getUser } from '../API/API_User';
 
 const Account = () => {
   const [accounts, setaccounts] = useState([]);
   const [Page, setPage] = useState(1);
+  const [Limit, setLimit] = useState(20)
+  const [Keywords, setKeywords] = useState('')
   const [isModalOpen, setIsModalOpen] = useState(false); // Trạng thái modal
   const [newAccount, setNewAccount] = useState({ id: null, name: '' }); // Trạng thái danh mục mới hoặc đang chỉnh sửa
 
   useEffect(() => {
     // Hàm để lấy danh sách danh mục (giả định API)
-    const fetchaccounts = async () => {
-      // Giả lập dữ liệu
-      const fetchedaccounts = [
-        { id: 1, name: 'Danh mục 1',password:'123456qwe',phonenumber: '0909123456',Email: 'dddd@gmail.com'},
-        { id: 2, name: 'Danh mục 2',password:'123456qwe',phonenumber: '0909123456',Email: 'dddd@gmail.com'},
-      ];
-      setaccounts(fetchedaccounts);
-    };
+    getUser(Page, Limit, Keywords)
+    .then((data) => {
+      setaccounts(data)
+    })
+  }, [Page, Limit, Keywords]);
 
-    fetchaccounts();
-  }, []);
+  console.log("account: ", accounts)
 
   const handleAddOrEditAccount = () => {
     if (newAccount.id) {
@@ -82,20 +81,20 @@ const Account = () => {
               <tr>
                 <th>ID Người Dùng</th>
                 <th>Tên Người Dùng</th>
-                <th>Mật Khẩu</th>
+                {/* <th>Mật Khẩu</th> */}
                 <th>Số Điện Thoại</th>
                 <th>Email</th>
                 <th></th>
               </tr>
             </thead>
             <tbody>
-              {accounts.map((Account) => (
+              {accounts?.data?.map((Account) => (
                 <tr key={Account.id}>
-                  <td>{Account.id}</td>
+                  <td>{Account._id}</td>
                   <td>{Account.name}</td>
-                  <td>{Account.password}</td>
-                  <td>{Account.phonenumber}</td>
-                  <td>{Account.Email}</td>
+                  {/* <td>{Account.password}</td> */}
+                  <td>{Account.phone}</td>
+                  <td>{Account.email}</td>
 
                   <td>
                     <button className="btn-action edit" onClick={() => handleEditAccount(Account)}>

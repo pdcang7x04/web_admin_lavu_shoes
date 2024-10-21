@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import Sidebar from './Sidepart';
 import '../Style/Order.css';
+import { formatDate, getOrder } from '../API/API_Order';
 
 const Order = () => {
   const [orders, setOrders] = useState([]);
   const [Page, setPage] = useState(1);
+  const [Limit, setLimit] = useState(20)
+  const [Keywords, setKeywords] = useState('')
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [newOrder, setNewOrder] = useState({ id: null, customerName: '', orderDate: '', productCount: '', status: '' });
@@ -26,6 +29,14 @@ const Order = () => {
     fetchOrders();
   }, []);
 
+  useEffect(() => {
+    // Hàm để lấy danh sách danh mục (giả định API)
+    getOrder(Page, Limit, Keywords)
+    .then((data) => {
+      setOrders(data)
+    })
+  }, [Page, Limit, Keywords]);
+
   const handleAddOrEditOrder = () => {
     if (newOrder.id) {
       setOrders(orders.map(order => order.id === newOrder.id ? newOrder : order));
@@ -46,6 +57,27 @@ const Order = () => {
     setSelectedProduct(product);
     setIsViewModalOpen(true);
   };
+
+  const statusOrder = (value) => {
+    if(value == 1){
+      return "Chưa thanh thoán"
+    }
+    if(value == 2){
+      return "Đã thanh toán"
+    }
+    if(value == 3){
+      return "Đang xử lý"
+    }
+    if(value == 4){
+      return "Đang giao"
+    }
+    if(value == 5){
+      return "Đã giao"
+    }
+    if(value == 6){
+      return "Đã hủy"
+    }
+  }
 
   return (
     <div className="background">
@@ -80,20 +112,20 @@ const Order = () => {
                 <th>ID Đơn Hàng</th>
                 <th>ID Người Mua</th>
                 <th>Ngày Đặt Hàng</th>
-                <th>Tổng Số Sản Phẩm</th>
+                <th>Tổng Số giá trị</th>
                 <th>Tình Trạng</th>
                 <th></th>
               </tr>
             </thead>
             <tbody>
-              {orders.map((order) => (
+              {orders?.data?.map((order) => (
                 <tr key={order.id}>
-                  <td>{order.id}</td>
-                  <td>{order.customerName}</td>
-                  <td>{order.orderDate}</td>
-                  <td>{order.productCount}</td>
+                  <td>{order._id}</td>
+                  <td>{order.user.name}</td>
+                  <td>{formatDate(order.createdAt)}</td>
+                  <td>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(order.totalAmount)}</td>
                   <td className={`${order.status === 'Đã giao hàng' ? 'completed' : order.status === 'Đang xử lý' ? 'processing' : 'cancelled'}`}>
-                    {order.status}
+                    {statusOrder(order?.paymentStatus)}
                   </td>
                   <td>
                     <button className="btn-action edit" onClick={() => handleEditOrder(order)}>
@@ -176,11 +208,15 @@ const Order = () => {
           <div className="modal">
             <div className="modal-content">
               <h3>Chi Tiết Sản Phẩm</h3>
-              <p><strong>ID Đơn Hàng:</strong> {selectedProduct.id}</p>
-              <p><strong>ID Người Mua:</strong> {selectedProduct.customerName}</p>
-              <p><strong>Ngày Đặt Hàng:</strong> {selectedProduct.orderDate}</p>
-              <p><strong>Tổng Số Sản Phẩm:</strong> {selectedProduct.productCount}</p>
-              <p><strong>Tình Trạng:</strong> {selectedProduct.status}</p>
+              <p><strong>ID Đơn Hàng:</strong> {selectedProduct._id}</p>
+              <p><strong>ID Người Mua:</strong> {selectedProduct.user.name}</p>
+              <p><strong>Ngày Đặt Hàng:</strong> {formatDate(selectedProduct.createdAt)}</p>
+              <p><strong>Tổng Số Sản Phẩm:</strong> {selectedProduct.orderDetail.map((product) => 
+              <tr>
+                <td>{product.product_id}</td>
+                </tr>
+              )}</p>
+              <p><strong>Tình Trạng:</strong> {statusOrder(selectedProduct.paymentStatus)}</p>
               
               <div className="modal-actions">
                 <button type="button" onClick={() => setIsViewModalOpen(false)}>Đóng</button>

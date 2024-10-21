@@ -1,26 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import Sidebar from './Sidepart'; // Đường dẫn tới thành phần Sidebar
 import '../Style/Category.css'; // Đường dẫn tới file CSS của bạn
+import { getBrand } from '../API/API_Brand';
 
 const Category = () => {
   const [categories, setCategories] = useState([]);
   const [Page, setPage] = useState(1);
+  const [Limit, setLimit] = useState(20)
+  const [Keywords, setKeywords] = useState('')
   const [isModalOpen, setIsModalOpen] = useState(false); // Trạng thái modal
   const [newCategory, setNewCategory] = useState({ id: null, name: '' }); // Trạng thái danh mục mới hoặc đang chỉnh sửa
 
   useEffect(() => {
-    // Hàm để lấy danh sách danh mục (giả định API)
-    const fetchCategories = async () => {
-      // Giả lập dữ liệu
-      const fetchedCategories = [
-        { id: 1, name: 'Danh mục 1' },
-        { id: 2, name: 'Danh mục 2' },
-      ];
-      setCategories(fetchedCategories);
-    };
+    getBrand(Page, Limit, Keywords)
+    .then((data) => {
+      setCategories(data)
+    })
+  }, [Page, Limit, Keywords]);
 
-    fetchCategories();
-  }, []);
+  console.log("brand: ",categories)
 
   const handleAddOrEditCategory = () => {
     if (newCategory.id) {
@@ -87,9 +85,9 @@ const Category = () => {
               </tr>
             </thead>
             <tbody>
-              {categories.map((category) => (
+              {categories?.data?.map((category) => (
                 <tr key={category.id}>
-                  <td>{category.id}</td>
+                  <td>{category._id}</td>
                   <td>{category.name}</td>
                   <td>
                     <button className="btn-action edit" onClick={() => handleEditCategory(category)}>
@@ -105,13 +103,17 @@ const Category = () => {
           </table>
           <div className="pagination">
             <button onClick={() => {
-              if (Page === 1) return;
-              setPage(Page - 1);
+              if (Page == 1) {
+                return; // Quay lại trang trước
+              }
+              setPage(Page - 1)
             }}>Trước</button>
-            <span>Trang {Page}/{Math.ceil(categories.length / 10)}</span>
+            <span>Trang {Page}/ {categories?.totalPages}</span>
             <button onClick={() => {
-              if (Page >= Math.ceil(categories.length / 10)) return;
-              setPage(Page + 1);
+              if (Page >= categories?.totalPages) {
+                return // Chuyển đến trang tiếp theo
+              }
+              setPage(Page + 1)
             }}>
               Sau
             </button>
