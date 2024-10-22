@@ -2,9 +2,12 @@ import React, { useEffect, useState } from 'react';
 import Sidebar from './Sidepart';
 import '../Style/Order.css';
 import { formatDate, getOrder } from '../API/API_Order';
+import { getUserById } from '../API/API_User';
+import { getProductById } from '../API/API_Product';
 
 const Order = () => {
   const [orders, setOrders] = useState([]);
+  const [Product, setProduct] = useState([])
   const [Page, setPage] = useState(1);
   const [Limit, setLimit] = useState(20)
   const [Keywords, setKeywords] = useState('')
@@ -13,29 +16,37 @@ const Order = () => {
   const [newOrder, setNewOrder] = useState({ id: null, customerName: '', orderDate: '', productCount: '', status: '' });
   const [selectedProduct, setSelectedProduct] = useState(null);
 
+
+
   useEffect(() => {
     const fetchOrders = async () => {
-      const fetchedOrders = [
-        { id: 1, customerName: 'Customer 1', orderDate: '2022-11-12', productCount: 4, status: 'Đã giao hàng' },
-        { id: 2, customerName: 'Customer 2', orderDate: '2022-12-21', productCount: 2, status: 'Đang xử lý' },
-        { id: 3, customerName: 'Customer 3', orderDate: '2022-05-12', productCount: 6, status: 'Đã hủy' },
-        { id: 4, customerName: 'Customer 4', orderDate: '2022-08-12', productCount: 4, status: 'Đang giao hàng' },
-        { id: 5, customerName: 'Customer 5', orderDate: '2023-09-23', productCount: 5, status: 'Đã giao hàng' },
-        { id: 6, customerName: 'Customer 6', orderDate: '2023-09-23', productCount: 1, status: 'Đã hủy' },
-      ];
-      setOrders(fetchedOrders);
+      try {
+        const data = await getOrder(Page, Limit, Keywords);
+        await setOrders(data);
+        // data.data.forEach((item) => {
+        //   const user =  getUserById(item.user)
+
+        //   console.log(item.orderDetail.product_id)
+        // });
+      } catch (error) {
+        console.error('Error fetching orders:', error);
+      }
     };
 
     fetchOrders();
-  }, []);
+  }, [Page, Limit, Keywords]);
 
   useEffect(() => {
-    // Hàm để lấy danh sách danh mục (giả định API)
-    getOrder(Page, Limit, Keywords)
-    .then((data) => {
-      setOrders(data)
-    })
-  }, [Page, Limit, Keywords]);
+    const fetchProducts = async () => {
+      if (selectedProduct?.orderDetail) {
+        const productPromises = selectedProduct.orderDetail.map((item) => getProductById(item.product_id));
+        const productsData = await Promise.all(productPromises);
+        setProduct(productsData);
+      }
+    };
+
+    fetchProducts();
+  }, [selectedProduct]);
 
   const handleAddOrEditOrder = () => {
     if (newOrder.id) {
@@ -59,22 +70,22 @@ const Order = () => {
   };
 
   const statusOrder = (value) => {
-    if(value == 1){
+    if (value == 1) {
       return "Chưa thanh thoán"
     }
-    if(value == 2){
+    if (value == 2) {
       return "Đã thanh toán"
     }
-    if(value == 3){
+    if (value == 3) {
       return "Đang xử lý"
     }
-    if(value == 4){
+    if (value == 4) {
       return "Đang giao"
     }
-    if(value == 5){
+    if (value == 5) {
       return "Đã giao"
     }
-    if(value == 6){
+    if (value == 6) {
       return "Đã hủy"
     }
   }
@@ -121,7 +132,7 @@ const Order = () => {
               {orders?.data?.map((order) => (
                 <tr key={order.id}>
                   <td>{order._id}</td>
-                  <td>{order.user.name}</td>
+                  <td>{order.user.username}</td>
                   <td>{formatDate(order.createdAt)}</td>
                   <td>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(order.totalAmount)}</td>
                   <td className={`${order.status === 'Đã giao hàng' ? 'completed' : order.status === 'Đang xử lý' ? 'processing' : 'cancelled'}`}>
@@ -194,7 +205,7 @@ const Order = () => {
                   <option value="Đã hủy">Đã hủy</option>
                   <option value="Đang giao hàng">Đang giao hàng</option>
                 </select>
-                
+
                 <div className="modal-actions">
                   <button type="button" onClick={() => setIsModalOpen(false)}>Hủy</button>
                   <button type="submit">{newOrder.id ? "Cập Nhật" : "Thêm"}</button>
@@ -204,26 +215,45 @@ const Order = () => {
           </div>
         )}
 
-        {isViewModalOpen && selectedProduct && (
-          <div className="modal">
-            <div className="modal-content">
-              <h3>Chi Tiết Sản Phẩm</h3>
-              <p><strong>ID Đơn Hàng:</strong> {selectedProduct._id}</p>
-              <p><strong>ID Người Mua:</strong> {selectedProduct.user.name}</p>
-              <p><strong>Ngày Đặt Hàng:</strong> {formatDate(selectedProduct.createdAt)}</p>
-              <p><strong>Tổng Số Sản Phẩm:</strong> {selectedProduct.orderDetail.map((product) => 
-              <tr>
-                <td>{product.product_id}</td>
-                </tr>
-              )}</p>
-              <p><strong>Tình Trạng:</strong> {statusOrder(selectedProduct.paymentStatus)}</p>
-              
-              <div className="modal-actions">
-                <button type="button" onClick={() => setIsViewModalOpen(false)}>Đóng</button>
-              </div>
+{isViewModalOpen && selectedProduct && (
+        <div className="modal">
+          <div className="modal-content">
+            <h3>Chi Tiết Sản Phẩm</h3>
+            <p><strong>ID Đơn Hàng:</strong> {selectedProduct._id}</p>
+            <p><strong>ID Người Mua:</strong> {selectedProduct.user.name}</p>
+            <p><strong>Ngày Đặt Hàng:</strong> {formatDate(selectedProduct.createdAt)}</p>
+            <p><strong>Tổng Số Sản Phẩm:</strong>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Tên Sản Phẩm</th>
+                    <th>Giá</th>
+                    <th>Số Lượng</th>
+                    <th>Màu</th>
+                    <th>Kích Thước</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {Product.map((product, index) => (
+                    <tr key={product._id}>
+                      <td>{product.name}</td>
+                      <td>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.price)}</td>
+                      <td>{selectedProduct.orderDetail[index].quantity}</td>
+                      <td>{selectedProduct.orderDetail[index].color}</td>
+                      <td>{selectedProduct.orderDetail[index].size}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </p>
+            <p><strong>Tình Trạng:</strong> {statusOrder(selectedProduct.paymentStatus)}</p>
+
+            <div className="modal-actions">
+              <button type="button" onClick={() => setIsViewModalOpen(false)}>Đóng</button>
             </div>
           </div>
-        )}
+        </div>
+      )}
       </div>
     </div>
   );
