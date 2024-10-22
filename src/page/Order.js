@@ -62,6 +62,7 @@ const Order = () => {
   const handleEditOrder = (order) => {
     setNewOrder(order);
     setIsModalOpen(true);
+    console.log(order)
   };
 
   const handleViewProduct = (product) => {
@@ -70,23 +71,31 @@ const Order = () => {
   };
 
   const statusOrder = (value) => {
-    if (value == 1) {
-      return "Chưa thanh thoán"
-    }
-    if (value == 2) {
-      return "Đã thanh toán"
+    if (value == 1 || value == 2) {
+      return "Chờ xác nhận"
     }
     if (value == 3) {
-      return "Đang xử lý"
+      return "Đã xác nhận"
     }
     if (value == 4) {
-      return "Đang giao"
+      return "Đang xử lý"
     }
     if (value == 5) {
-      return "Đã giao"
+      return "Đang giao"
     }
     if (value == 6) {
+      return "Đã giao"
+    }
+    if (value == 7) {
       return "Đã hủy"
+    }
+  }
+
+  const statusPayment = (value) => {
+    if(value >= 2 || value < 7){
+      return "Đã thanh toán"
+    }else{
+      return "Chưa thanh toán"
     }
   }
 
@@ -173,7 +182,7 @@ const Order = () => {
                 <label>ID Người Mua</label>
                 <input
                   type="text"
-                  value={newOrder.customerName}
+                  value={newOrder.user.username}
                   onChange={(e) => setNewOrder({ ...newOrder, customerName: e.target.value })}
                   placeholder="Nhập Tên Người Mua"
                   required
@@ -215,45 +224,84 @@ const Order = () => {
           </div>
         )}
 
-{isViewModalOpen && selectedProduct && (
-        <div className="modal">
-          <div className="modal-content">
-            <h3>Chi Tiết Sản Phẩm</h3>
-            <p><strong>ID Đơn Hàng:</strong> {selectedProduct._id}</p>
-            <p><strong>ID Người Mua:</strong> {selectedProduct.user.name}</p>
-            <p><strong>Ngày Đặt Hàng:</strong> {formatDate(selectedProduct.createdAt)}</p>
-            <p><strong>Tổng Số Sản Phẩm:</strong>
-              <table>
-                <thead>
-                  <tr>
-                    <th>Tên Sản Phẩm</th>
-                    <th>Giá</th>
-                    <th>Số Lượng</th>
-                    <th>Màu</th>
-                    <th>Kích Thước</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {Product.map((product, index) => (
-                    <tr key={product._id}>
-                      <td>{product.name}</td>
-                      <td>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.price)}</td>
-                      <td>{selectedProduct.orderDetail[index].quantity}</td>
-                      <td>{selectedProduct.orderDetail[index].color}</td>
-                      <td>{selectedProduct.orderDetail[index].size}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </p>
-            <p><strong>Tình Trạng:</strong> {statusOrder(selectedProduct.paymentStatus)}</p>
+        {isViewModalOpen && selectedProduct && (
+          <div className="modal">
+            <div className="modal-content">
+              <div className='body-modal'>
+                <h3>Lavu's shoes</h3>
+                <p><strong>Địa chỉ:</strong>Chưa có</p>
+                <p><strong>Số điện thoại:</strong>Chưa có</p>
+                <p><strong>Email:</strong>Chưa có</p>
+              </div>
 
-            <div className="modal-actions">
-              <button type="button" onClick={() => setIsViewModalOpen(false)}>Đóng</button>
+              <div className='body-modal'>
+                <p><strong>Mã đơn hàng: </strong>{selectedProduct._id}</p>
+                <p><strong>Ngày đặt hàng: </strong>{formatDate(selectedProduct.createdAt)}</p>
+                <p><strong>Trạng thái: </strong>{statusOrder(selectedProduct.paymentStatus)}</p>
+              </div>
+              <br/>
+              <div className='body-modal'>
+                <h5>Thông tin khách hàng</h5>
+                <p><strong>Tên khách hàng: </strong>{selectedProduct.user.username}</p>
+                <p><strong>Địa chỉ: </strong>{selectedProduct.shippingAddress.address}</p>
+                <p><strong>Số điện thoại: </strong>{selectedProduct.shippingAddress.phone}</p>
+              </div>
+              <br/>
+              <div className='detail-product'>
+                <h3>Chi tiết sản phẩm</h3>
+                <table className='detail-table'>
+                  <thead>
+                    <tr>
+                      <th className='detail-th'>Tên Sản Phẩm</th>
+                      <th className='detail-th'>Mã sản phẩm</th>
+                      <th className='detail-th'>Màu sắc</th>
+                      <th className='detail-th'>Kích thước</th>
+                      <th className='detail-th'>Số lượng</th>
+                      <th className='detail-th'>Giá</th>
+                      <th className='detail-th'>Tổng</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {Product.map((product, index) => (
+                      <tr key={product._id}>
+                        <td className='detail-td'>{product.name}</td>
+                        <td className='detail-td'>{product._id}</td>
+                        <td className='detail-td'>{selectedProduct.orderDetail[index].color}</td>
+                        <td className='detail-td'>{selectedProduct.orderDetail[index].size}</td>
+                        <td className='detail-td'>{selectedProduct.orderDetail[index].quantity}</td>
+                        <td className='detail-td'>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.price)}</td>
+                        <td className='detail-td'>
+                          {
+                            new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(
+                              product.price * selectedProduct.orderDetail[index].quantity
+                            )
+                          }
+                        </td>
+                        
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <br/>
+              <div className='body-modal'>
+                <p><strong>Tổng tiền: </strong>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(selectedProduct.totalAmount-30000)}</p>
+                <p><strong>Chi Phí vận chuyển: </strong>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(30000)}</p>
+                <p><strong>Giảm giá: </strong>0 đ</p>
+              </div>
+              <br/>
+              <div className='body-modal'>
+                <p><strong>Tổng thanh toán: </strong>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(selectedProduct.totalAmount)}</p>
+                <p><strong>Phương thức thanh toán: </strong>{selectedProduct.paymentmethod}</p>
+                <p><strong>Trạng thái thanh toán: </strong>{statusPayment(selectedProduct.paymentStatus)}</p>
+              </div>
+              <br/>
+              <div className="modal-actions">
+                <button type="button" onClick={() => setIsViewModalOpen(false)}>Đóng</button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
       </div>
     </div>
   );
