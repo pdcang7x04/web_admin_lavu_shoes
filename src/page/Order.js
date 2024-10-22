@@ -6,8 +6,8 @@ import { formatDate, getOrder } from '../API/API_Order';
 const Order = () => {
   const [orders, setOrders] = useState([]);
   const [Page, setPage] = useState(1);
-  const [Limit, setLimit] = useState(20)
-  const [Keywords, setKeywords] = useState('')
+  const [Limit, setLimit] = useState(20);
+  const [Keywords, setKeywords] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [newOrder, setNewOrder] = useState({ id: null, customerName: '', orderDate: '', productCount: '', status: '' });
@@ -15,26 +15,16 @@ const Order = () => {
 
   useEffect(() => {
     const fetchOrders = async () => {
-      const fetchedOrders = [
-        { id: 1, customerName: 'Customer 1', orderDate: '2022-11-12', productCount: 4, status: 'Đã giao hàng' },
-        { id: 2, customerName: 'Customer 2', orderDate: '2022-12-21', productCount: 2, status: 'Đang xử lý' },
-        { id: 3, customerName: 'Customer 3', orderDate: '2022-05-12', productCount: 6, status: 'Đã hủy' },
-        { id: 4, customerName: 'Customer 4', orderDate: '2022-08-12', productCount: 4, status: 'Đang giao hàng' },
-        { id: 5, customerName: 'Customer 5', orderDate: '2023-09-23', productCount: 5, status: 'Đã giao hàng' },
-        { id: 6, customerName: 'Customer 6', orderDate: '2023-09-23', productCount: 1, status: 'Đã hủy' },
-      ];
-      setOrders(fetchedOrders);
+      const fetchedOrders = await getOrder(Page, Limit, Keywords);
+      if (Array.isArray(fetchedOrders)) {
+        setOrders(fetchedOrders);
+      } else {
+        console.error("Dữ liệu không hợp lệ:", fetchedOrders);
+        setOrders([]);
+      }
     };
 
     fetchOrders();
-  }, []);
-
-  useEffect(() => {
-    // Hàm để lấy danh sách danh mục (giả định API)
-    getOrder(Page, Limit, Keywords)
-    .then((data) => {
-      setOrders(data)
-    })
   }, [Page, Limit, Keywords]);
 
   const handleAddOrEditOrder = () => {
@@ -59,25 +49,16 @@ const Order = () => {
   };
 
   const statusOrder = (value) => {
-    if(value == 1){
-      return "Chưa thanh thoán"
+    switch (value) {
+      case 1: return "Chưa thanh toán";
+      case 2: return "Đã thanh toán";
+      case 3: return "Đang xử lý";
+      case 4: return "Đang giao";
+      case 5: return "Đã giao";
+      case 6: return "Đã hủy";
+      default: return "Không xác định";
     }
-    if(value == 2){
-      return "Đã thanh toán"
-    }
-    if(value == 3){
-      return "Đang xử lý"
-    }
-    if(value == 4){
-      return "Đang giao"
-    }
-    if(value == 5){
-      return "Đã giao"
-    }
-    if(value == 6){
-      return "Đã hủy"
-    }
-  }
+  };
 
   return (
     <div className="background">
@@ -86,10 +67,12 @@ const Order = () => {
         <div className="header">
           <form className="search-bar">
             <div className="search-input-wrapper">
+            <img src={require('../img/search.png')} alt="bell" className="icon24" />
               <input
                 type="text"
                 name="search"
                 placeholder="Tìm kiếm sản phẩm, nhà cung cấp, đặt hàng"
+                onChange={(e) => setKeywords(e.target.value)}
               />
             </div>
           </form>
@@ -118,25 +101,31 @@ const Order = () => {
               </tr>
             </thead>
             <tbody>
-              {orders?.data?.map((order) => (
-                <tr key={order.id}>
-                  <td>{order._id}</td>
-                  <td>{order.user.name}</td>
-                  <td>{formatDate(order.createdAt)}</td>
-                  <td>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(order.totalAmount)}</td>
-                  <td className={`${order.status === 'Đã giao hàng' ? 'completed' : order.status === 'Đang xử lý' ? 'processing' : 'cancelled'}`}>
-                    {statusOrder(order?.paymentStatus)}
-                  </td>
-                  <td>
-                    <button className="btn-action edit" onClick={() => handleEditOrder(order)}>
-                      <img className="icon24" src={require('../img/edit.png')} alt="edit" />
-                    </button>
-                    <button className="btn-action view" onClick={() => handleViewProduct(order)}>
-                      <img className="icon24" src={require('../img/image.png')} alt="view" />
-                    </button>
-                  </td>
+              {orders.length > 0 ? (
+                orders.map((order) => (
+                  <tr key={order.id}>
+                    <td>{order._id}</td>
+                    <td>{order.user.name}</td>
+                    <td>{formatDate(order.createdAt)}</td>
+                    <td>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(order.totalAmount)}</td>
+                    <td className={`${order.status === 'Đã giao hàng' ? 'completed' : order.status === 'Đang xử lý' ? 'processing' : 'cancelled'}`}>
+                      {statusOrder(order?.paymentStatus)}
+                    </td>
+                    <td>
+                      <button className="btn-action edit" onClick={() => handleEditOrder(order)}>
+                        <img className="icon24" src={require('../img/edit.png')} alt="edit" />
+                      </button>
+                      <button className="btn-action view" onClick={() => handleViewProduct(order)}>
+                        <img className="icon24" src={require('../img/image.png')} alt="view" />
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="6">Không có đơn hàng nào.</td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
           <div className="pagination">
@@ -144,9 +133,9 @@ const Order = () => {
               if (Page === 1) return;
               setPage(Page - 1);
             }}>Trước</button>
-            <span>Trang {Page}/{Math.ceil(orders.length / 10)}</span>
+            <span>Trang {Page}/{Math.ceil(orders.length / Limit)}</span>
             <button onClick={() => {
-              if (Page >= Math.ceil(orders.length / 10)) return;
+              if (Page >= Math.ceil(orders.length / Limit)) return;
               setPage(Page + 1);
             }}>
               Sau
@@ -212,9 +201,7 @@ const Order = () => {
               <p><strong>ID Người Mua:</strong> {selectedProduct.user.name}</p>
               <p><strong>Ngày Đặt Hàng:</strong> {formatDate(selectedProduct.createdAt)}</p>
               <p><strong>Tổng Số Sản Phẩm:</strong> {selectedProduct.orderDetail.map((product) => 
-              <tr>
-                <td>{product.product_id}</td>
-                </tr>
+                <span key={product.product_id}>{product.product_id} </span>
               )}</p>
               <p><strong>Tình Trạng:</strong> {statusOrder(selectedProduct.paymentStatus)}</p>
               
@@ -227,6 +214,6 @@ const Order = () => {
       </div>
     </div>
   );
-}
+};
 
 export default Order;

@@ -52,6 +52,7 @@ const Category = () => {
         <div className="header">
           <form className="search-bar">
             <div className="search-input-wrapper">
+            <img src={require('../img/search.png')} alt="bell" className="icon24" />
               <input
                 type="text"
                 name="search"

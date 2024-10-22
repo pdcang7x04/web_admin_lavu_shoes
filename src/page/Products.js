@@ -2,14 +2,14 @@ import React, { useEffect, useState } from "react";
 import "../Style/Product.css";
 import Sidebar from "./Sidepart";
 import { success } from "../swal/Swal";
-
+import ProductModal from "../Modal/ProductModal.js"; // Import component modal
 
 const ProductList = () => {
   const [products, setProducts] = useState({});
-  const [Page, setPage] = useState(1)
-  const [limit, setlimit] = useState(10)
-  const [keywords, setkeywords] = useState('')
-  const [isModalOpen, setIsModalOpen] = useState(false); // Trạng thái modal
+  const [Page, setPage] = useState(1);
+  const [limit, setlimit] = useState(6);
+  const [keywords, setkeywords] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [newProduct, setNewProduct] = useState({ 
     name: '', 
     price: '', 
@@ -20,9 +20,8 @@ const ProductList = () => {
     sizes: '', 
     status: '', 
     brand: '', 
-    category: ''});
-  
-
+    category: ''
+  });
 
   const fetchProducts = async () => {
     try {
@@ -32,29 +31,26 @@ const ProductList = () => {
           method: 'GET',
           headers: { 'Content-Type': 'application/json' },
         }
-      )
+      );
       const result = await response.json();
-      console.log(result)
       if (result.status) {
-        setProducts(result)
+        setProducts(result);
       }
     } catch (error) {
       console.error("Error fetching products:", error);
     }
   };
 
-
   useEffect(() => {
     fetchProducts();
   }, [Page, limit, keywords]);
-
 
   const handleAddProduct = () => {
     const newId = products.length + 1;
     const productToAdd = { ...newProduct, id: newId };
     setProducts([...products, productToAdd]);
-    setIsModalOpen(false); // Đóng modal
-    setNewProduct({ name: "", category: "", price: "", stock: "", image: null }); // Reset form
+    setIsModalOpen(false); 
+    setNewProduct({ name: "", category: "", price: "", stock: "", image: null });
   };
 
   const handleImageChange = (e) => {
@@ -68,6 +64,7 @@ const ProductList = () => {
         <div className="header">
           <form className="search-bar">
             <div className="search-input-wrapper">
+              <img src={require('../img/search.png')} alt="bell" className="icon24" />
               <input
                 type="text"
                 name="search"
@@ -100,7 +97,6 @@ const ProductList = () => {
               <tr>
                 <th>Tên Sản Phẩm</th>
                 <th>Giá</th>
-                {/* <th>Size</th> */}
                 <th>Số Lượng Còn</th>
                 <th>Ngày Nhập</th>
                 <th>Sẵn Có</th>
@@ -112,19 +108,20 @@ const ProductList = () => {
                 <tr key={product.id}>
                   <td>{product.name}</td>
                   <td>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.price)}</td>
-                  {/* <td>{product.size.join(', ')}</td> */}
                   <td>{product.currentQuantity} Sản phẩm</td>
                   <td>{product.date}</td>
                   <td className={product.status !== 5 ? "status-available" : "status-out"}>
                     {product.status !== 5 ? "Còn hàng" : "Hết hàng"}
                   </td>
                   <td>
-                    <button className="btn-action edit">
-                      <img className="icon24" src={require('../img/edit.png')} alt="edit" />
-                    </button>
-                    <button className="btn-action delete">
-                      <img className="icon24" src={require('../img/delete.png')} alt="delete" />
-                    </button>
+                    <div className="btn-group">
+                      <button className="btn-action edit">
+                        <img className="icon24" src={require('../img/edit.png')} alt="edit" />
+                      </button>
+                      <button className="btn-action delete">
+                        <img className="icon24" src={require('../img/delete.png')} alt="delete" />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -132,56 +129,28 @@ const ProductList = () => {
           </table>
           <div className="pagination">
             <button onClick={() => {
-              if (Page == 1) {
-                return; // Quay lại trang trước
-              }
-              setPage(Page - 1)
+              if (Page === 1) return; 
+              setPage(Page - 1);
             }}>Trước</button>
             <span>Trang {Page}/{products?.data?.totalPages}</span>
             <button onClick={() => {
-              if (Page >= products?.data?.totalPages) {
-                return // Chuyển đến trang tiếp theo
-              }
-              setPage(Page + 1)
+              if (Page >= products?.data?.totalPages) return; 
+              setPage(Page + 1);
             }}>
               Sau
             </button>
           </div>
         </div>
 
-
-        {/* Modal thêm sản phẩm */}
-        {isModalOpen == true && (
-          <div className="modal">
-            <div className="modal-content">
-              <h3>Thêm Sản Phẩm</h3>
-              <div className="image-upload">
-                {newProduct.images ? (
-                  <img src={URL.createObjectURL(newProduct.images)} alt="Product" className="product-image-preview" />
-                ) : (
-                  <div className="image-placeholder">
-                    <p>Kéo hình ảnh vào đây</p>
-                    <input type="file" accept="image/*" onChange={handleImageChange} />
-                  </div>
-                )}
-              </div>
-              <form onSubmit={(e) => { e.preventDefault(); handleAddProduct(); }}>
-                <label>Tên Sản Phẩm</label>
-                <input type="text" value={newProduct.name} onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })} placeholder="Nhập Tên SP" required />
-                <label>Loại Sản Phẩm</label>
-                <input type="text" value={newProduct.category} onChange={(e) => setNewProduct({ ...newProduct, category: e.target.value })} placeholder="Nhập Loại SP" required />
-                <label>Giá Sản Phẩm</label>
-                <input type="text" value={newProduct.price} onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })} placeholder="Giá SP" required />
-                <label>Số Lượng SP</label>
-                <input type="number" value={newProduct.stock} onChange={(e) => setNewProduct({ ...newProduct, stock: e.target.value })} placeholder="Nhập Số Lượng SP" required />
-                <div className="modal-actions">
-                  <button type="button" onClick={() => setIsModalOpen(false)}>Hủy</button>
-                  <button type="submit">Thêm SP</button>
-                </div>
-              </form>
-            </div>
-          </div>
-        )}
+        {/* Sử dụng component ProductModal */}
+        <ProductModal 
+          isModalOpen={isModalOpen}
+          setIsModalOpen={setIsModalOpen}
+          newProduct={newProduct}
+          setNewProduct={setNewProduct}
+          handleAddProduct={handleAddProduct}
+          handleImageChange={handleImageChange}
+        />
       </div>
     </div>
   );
