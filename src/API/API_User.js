@@ -21,4 +21,23 @@ const getUser = async (page, limit, keywords) => {
     }
 }
 
-export { getUser };
+const getUserById = async (_id) => {
+    try {
+        const response = await fetch(
+            `http://localhost:3000/users/getUserByID/${_id}`,
+            {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' },
+            }
+        )
+        const result = await response.json();
+        console.log(result);
+        if (result.status) {
+            return result.data
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export { getUser, getUserById };
