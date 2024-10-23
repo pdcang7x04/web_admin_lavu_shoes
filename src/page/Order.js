@@ -75,10 +75,11 @@ const Order = () => {
     switch (value) {
       case 1: return "Chờ xác nhận";
       case 2: return "Chờ xác nhận";
-      case 3: return "Đang xử lý";
-      case 4: return "Đang giao";
-      case 5: return "Đã giao";
-      case 6: return "Đã hủy";
+      case 3: return "Đã xác nhận";
+      case 4: return "Đang xử lý";
+      case 5: return "Đang giao";
+      case 6: return "Đã giao";
+      case 7: return "Đã hủy";
       default: return "Không xác định";
     }
   };
@@ -317,6 +318,10 @@ const Order = () => {
                 <p><strong>Tổng thanh toán: </strong>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(selectedProduct.totalAmount)}</p>
                 <p><strong>Phương thức thanh toán: </strong>{selectedProduct.paymentmethod}</p>
                 <p><strong>Trạng thái thanh toán: </strong>{statusPayment(selectedProduct.paymentStatus)}</p>
+                <button type="button" onClick={() => setIsViewModalOpen(false)}>Đã xác nhận</button>
+                <button type="button" onClick={() => setIsViewModalOpen(false)}>Đang xử lý</button>
+                <button type="button" onClick={() => setIsViewModalOpen(false)}>Đang giao</button>
+                <button type="button" onClick={() => setIsViewModalOpen(false)}>Hủy đơn</button>
               </div>
               <br />
 
