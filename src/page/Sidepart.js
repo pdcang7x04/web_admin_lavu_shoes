@@ -7,68 +7,7 @@ import setting from '../img/setting.png';
 import logout from '../img/logout.png';
 import bar_chart from '../img/bar-chart.png';
 import box from '../img/box.png';
-
-const sidebarStyles = {
-  sidebar: {
-    width: '280px',
-    backgroundColor: '#FFFFFF',
-    height: '100vh',
-    padding: '20px',
-    boxShadow: '1px 0 5px rgba(0,0,0,0.1)',
-    position: 'fixed',
-    borderRadius: '0 5%',
-  },
-  logobox: {
-    width: '240px',
-    display: 'flex',
-    alignItems: 'center',
-  },
-  logo: {
-    width: '50px',
-    height: '50px',
-  },
-  textLogo: {
-    fontSize: '20px',
-    marginLeft: '5px',
-    fontWeight: 'bold',
-    color: '#F15E2B',
-  },
-  ul_1: {
-    marginTop: '100px',
-    listStyleType: 'none',
-    padding: 0,
-  },
-  li: {
-    display: 'flex',
-    alignItems: 'center',
-    marginBottom: '30px',
-    cursor: 'pointer',
-  },
-  icon: {
-    width: '24px',
-    height: '24px',
-    marginRight: '10px',
-    transition: 'filter 0.3s',
-  },
-  link: {
-    display: 'flex',
-    alignItems: 'center',
-    color: '#333',
-    textDecoration: 'none',
-    borderRadius: '5px',
-    padding: '10px',
-    transition: 'background-color 0.3s',
-  },
-  activeLink: {
-    backgroundColor: '#F15E2B', // Màu cam khi mục được chọn
-    color: '#FFFFFF', // Màu chữ trắng
-  },
-  ul2: {
-    marginTop: '100px',
-    listStyleType: 'none',
-    padding: 0,
-  },
-};
+import '../Style/Sidepart.css'; // Import file CSS
 
 const Sidebar = () => {
   const [activeItem, setActiveItem] = useState(window.location.pathname); // Đặt mặc định là đường dẫn hiện tại
@@ -78,20 +17,17 @@ const Sidebar = () => {
   };
 
   return (
-    <div style={sidebarStyles.sidebar}>
-      <div style={sidebarStyles.logobox}>
-        <img src={logo} alt="Logo" style={sidebarStyles.logo} />
-        <span style={sidebarStyles.textLogo}>LAVU’S SHOESHOP</span>
+    <div className="sidebar">
+      <div className="logobox">
+        <img src={logo} alt="Logo" className="logo" />
+        <span className="textLogo">LAVU’S SHOESHOP</span>
       </div>
-      <ul style={sidebarStyles.ul_1}>
+      <ul className="ul_1">
         {['/products', '/category', '/account', '/orders', '/stats'].map((path, index) => (
-          <li key={index} style={sidebarStyles.li}>
+          <li key={index} className="li">
             <Link
               to={path}
-              style={{
-                ...sidebarStyles.link,
-                ...(activeItem === path ? sidebarStyles.activeLink : {})
-              }}
+              className={`link ${activeItem === path ? 'activeLink' : ''}`}
               onClick={() => handleClick(path)}
             >
               <img
@@ -101,7 +37,7 @@ const Sidebar = () => {
                      path === '/orders' ? box :
                      bar_chart}
                 alt={path.substring(1)}
-                style={sidebarStyles.icon}
+                className="icon"
               />
               <span>{path === '/products' ? 'Sản Phẩm' :
                       path === '/category' ? 'Danh Mục Sản Phẩm' :
@@ -113,16 +49,16 @@ const Sidebar = () => {
         ))}
       </ul>
 
-      <ul style={sidebarStyles.ul2}>
-        <li style={sidebarStyles.li}>
-          <Link to="/settings" style={sidebarStyles.link} onClick={() => handleClick('/settings')}>
-            <img src={setting} alt='setting' style={sidebarStyles.icon} />
+      <ul className="ul2">
+        <li className="li">
+          <Link to="/settings" className="link" onClick={() => handleClick('/settings')}>
+            <img src={setting} alt='setting' className="icon" />
             <span>Cài Đặt</span>
           </Link>
         </li>
-        <li style={sidebarStyles.li}>
-          <Link to="/logout" style={sidebarStyles.link} onClick={() => handleClick('/logout')}>
-            <img src={logout} alt='logout' style={sidebarStyles.icon} />
+        <li className="li">
+          <Link to="/logout" className="link" onClick={() => handleClick('/logout')}>
+            <img src={logout} alt='logout' className="icon" />
             <span>Đăng Xuất</span>
           </Link>
         </li>
