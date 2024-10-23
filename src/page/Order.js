@@ -24,11 +24,7 @@ const Order = () => {
       try {
         const data = await getOrder(Page, Limit, Keywords);
         await setOrders(data);
-        // data.data.forEach((item) => {
-        //   const user =  getUserById(item.user)
 
-        //   console.log(item.orderDetail.product_id)
-        // });
       } catch (error) {
         console.error('Error fetching orders:', error);
 
@@ -77,8 +73,8 @@ const Order = () => {
   const statusOrder = (value) => {
 
     switch (value) {
-      case 1: return "Chưa thanh toán";
-      case 2: return "Đã thanh toán";
+      case 1: return "Chờ xác nhận";
+      case 2: return "Chờ xác nhận";
       case 3: return "Đang xử lý";
       case 4: return "Đang giao";
       case 5: return "Đã giao";
@@ -87,31 +83,31 @@ const Order = () => {
     }
   };
 
-//     if (value == 1 || value == 2) {
-//       return "Chờ xác nhận"
-//     }
-//     if (value == 3) {
-//       return "Đã xác nhận"
-//     }
-//     if (value == 4) {
-//       return "Đang xử lý"
-//     }
-//     if (value == 5) {
-//       return "Đang giao"
-//     }
-//     if (value == 6) {
-//       return "Đã giao"
-//     }
-//     if (value == 7) {
-//       return "Đã hủy"
-//     }
-//   }
-// >>>>>>> master
+  //     if (value == 1 || value == 2) {
+  //       return "Chờ xác nhận"
+  //     }
+  //     if (value == 3) {
+  //       return "Đã xác nhận"
+  //     }
+  //     if (value == 4) {
+  //       return "Đang xử lý"
+  //     }
+  //     if (value == 5) {
+  //       return "Đang giao"
+  //     }
+  //     if (value == 6) {
+  //       return "Đã giao"
+  //     }
+  //     if (value == 7) {
+  //       return "Đã hủy"
+  //     }
+  //   }
+  // >>>>>>> master
 
   const statusPayment = (value) => {
-    if(value >= 2 || value < 7){
+    if (value >= 2 || value < 7) {
       return "Đã thanh toán"
-    }else{
+    } else {
       return "Chưa thanh toán"
     }
   }
@@ -123,7 +119,7 @@ const Order = () => {
         <div className="header">
           <form className="search-bar">
             <div className="search-input-wrapper">
-            <img src={require('../img/search.png')} alt="bell" className="icon24" />
+              <img src={require('../img/search.png')} alt="bell" className="icon24" />
               <input
                 type="text"
                 name="search"
@@ -158,8 +154,11 @@ const Order = () => {
             </thead>
             <tbody>
 
-              {orders.length > 0 ? (
-                orders.map((order) => (
+              {!orders ?
+                <tr>
+                  <td colSpan="6">Không có đơn hàng nào.</td>
+                </tr> :
+                orders?.data?.map((order) => (
                   <tr key={order.id}>
                     <td>{order._id}</td>
                     <td>{order.user.name}</td>
@@ -178,30 +177,8 @@ const Order = () => {
                     </td>
                   </tr>
                 ))
-              ) : (
-                <tr>
-                  <td colSpan="6">Không có đơn hàng nào.</td>
-
-//               {orders?.data?.map((order) => (
-//                 <tr key={order.id}>
-//                   <td>{order._id}</td>
-//                   <td>{order.user.username}</td>
-//                   <td>{formatDate(order.createdAt)}</td>
-//                   <td>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(order.totalAmount)}</td>
-//                   <td className={`${order.status === 'Đã giao hàng' ? 'completed' : order.status === 'Đang xử lý' ? 'processing' : 'cancelled'}`}>
-//                     {statusOrder(order?.paymentStatus)}
-//                   </td>
-//                   <td>
-//                     <button className="btn-action edit" onClick={() => handleEditOrder(order)}>
-//                       <img className="icon24" src={require('../img/edit.png')} alt="edit" />
-//                     </button>
-//                     <button className="btn-action view" onClick={() => handleViewProduct(order)}>
-//                       <img className="icon24" src={require('../img/image.png')} alt="view" />
-//                     </button>
-//                   </td>
-
-                </tr>
-              )}
+              }
+              
             </tbody>
           </table>
           <div className="pagination">
@@ -285,14 +262,14 @@ const Order = () => {
                 <p><strong>Ngày đặt hàng: </strong>{formatDate(selectedProduct.createdAt)}</p>
                 <p><strong>Trạng thái: </strong>{statusOrder(selectedProduct.paymentStatus)}</p>
               </div>
-              <br/>
+              <br />
               <div className='body-modal'>
                 <h5>Thông tin khách hàng</h5>
                 <p><strong>Tên khách hàng: </strong>{selectedProduct.user.username}</p>
                 <p><strong>Địa chỉ: </strong>{selectedProduct.shippingAddress.address}</p>
                 <p><strong>Số điện thoại: </strong>{selectedProduct.shippingAddress.phone}</p>
               </div>
-              <br/>
+              <br />
               <div className='detail-product'>
                 <h3>Chi tiết sản phẩm</h3>
                 <table className='detail-table'>
@@ -323,25 +300,25 @@ const Order = () => {
                             )
                           }
                         </td>
-                        
+
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
-              <br/>
+              <br />
               <div className='body-modal'>
-                <p><strong>Tổng tiền: </strong>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(selectedProduct.totalAmount-30000)}</p>
+                <p><strong>Tổng tiền: </strong>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(selectedProduct.totalAmount - 30000)}</p>
                 <p><strong>Chi Phí vận chuyển: </strong>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(30000)}</p>
                 <p><strong>Giảm giá: </strong>0 đ</p>
               </div>
-              <br/>
+              <br />
               <div className='body-modal'>
                 <p><strong>Tổng thanh toán: </strong>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(selectedProduct.totalAmount)}</p>
                 <p><strong>Phương thức thanh toán: </strong>{selectedProduct.paymentmethod}</p>
                 <p><strong>Trạng thái thanh toán: </strong>{statusPayment(selectedProduct.paymentStatus)}</p>
               </div>
-              <br/>
+              <br />
 
               <div className="modal-actions">
                 <button type="button" onClick={() => setIsViewModalOpen(false)}>Đóng</button>
