@@ -19,6 +19,26 @@ const getProductById = async (id) => {
     }
 }
 
+const getAllProduct = async () => {
+    try {
+        const response = await fetch(
+            `http://localhost:3000/products/getall`,
+            {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' },
+            }
+        )
+        const result = await response.json();
+        console.log(result);
+        if (result.status) {
+            return result.data
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+
 const addNewProduct = async (body) => {
     try {
         const response = await fetch(
@@ -86,4 +106,4 @@ const deleteProduct = async (id) => {
     }
 }
 
-export { getProductById, addNewProduct, deleteProduct, updateProduct };
+export { getProductById, addNewProduct, deleteProduct, updateProduct, getAllProduct };

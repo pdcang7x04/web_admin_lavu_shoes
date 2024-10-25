@@ -7,7 +7,8 @@ import CategoryPage from './page/Category';
 import AccountPage from './page/Accounts';
 import OrderPage from './page/Order';
 import Brand from './page/Brand';
-import Charts from './page/Charts';
+import Charts from './page/Stats';
+import Stats from './page/Stats';
 const App = () => {
   return (
     <Router>
@@ -19,7 +20,7 @@ const App = () => {
         <Route path="/account" element={<AccountPage />} />
         <Route path="/orders" element={<OrderPage />} /> 
         <Route path="/brand" element={<Brand />} /> 
-        <Route path="/stats" element={<Charts />} /> 
+        <Route path="/stats" element={<Stats />} /> 
         {/* Thêm các route khác nếu cần */}
       </Routes>
     </Router>
