@@ -1,20 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import Sidebar from './Sidepart'; // Đường dẫn tới thành phần Sidebar
 import '../Style/Category.css'; // Đường dẫn tới file CSS của bạn
-import { addNewCategory, deleteCategory, getCategoryByQuery, updateCategory } from '../API/API_Category';
+import { getBrand, addNewBrand, deleteBrand, updateBrand } from '../API/API_Brand';
 
-
-const Category = () => {
+const Brand = () => {
   const [categories, setCategories] = useState([]);
   const [Page, setPage] = useState(1);
   const [Limit, setLimit] = useState(20)
   const [Keywords, setKeywords] = useState('')
   const [isModalOpen, setIsModalOpen] = useState(false); // Trạng thái modal
   const [isModalUpdateOpen, setIsModaUpdatelOpen] = useState(false); // Trạng thái modal
-  const [newCategory, setNewCategory] = useState(''); // Trạng thái danh mục mới hoặc đang chỉnh sửa
+  const [newCategory, setNewCategory] = useState({ name: '', image: '' }); // Trạng thái danh mục mới hoặc đang chỉnh sửa
 
   useEffect(() => {
-    getCategoryByQuery(Page, Limit, Keywords)
+    getBrand(Page, Limit, Keywords)
       .then((data) => {
         setCategories(data)
       })
@@ -23,9 +22,9 @@ const Category = () => {
 
   const handleAddOrEditCategory = async () => {
     try {
-      const addnew = await addNewCategory({name : newCategory})
+      const addnew = await addNewBrand(newCategory)
       if (addnew) {
-        setNewCategory('')
+        setNewCategory({ name: "", image: "" })
         setIsModalOpen(false)
         window.location.reload()
       } else {
@@ -40,8 +39,9 @@ const Category = () => {
     try {
       const body = {
         name: newCategory.name,
+        image: newCategory.image
       }
-      const update = await updateCategory(newCategory.id, body)
+      const update = await updateBrand(newCategory.id, body)
       if(update){
         setNewCategory({})
         setIsModaUpdatelOpen(false)
@@ -56,7 +56,7 @@ const Category = () => {
 
   const handleDeleteCategory = async (id) => {
     try {
-      const deleteitem = await deleteCategory(id)
+      const deleteitem = await deleteBrand(id)
       if (deleteitem) {
         window.location.reload()
       } else {
@@ -91,7 +91,7 @@ const Category = () => {
         </div>
         <div className="product-container">
           <div className="table-header">
-            <span className="text_sp">Danh Mục Sản Phẩm</span>
+            <span className="text_sp">Danh sách Nhãn Hàng</span>
             <div className="button_header">
               <button className="btn-add" onClick={() => setIsModalOpen(true)}>Thêm</button>
               <button className="btn-filter">
@@ -120,6 +120,7 @@ const Category = () => {
                       setNewCategory({
                         id: category._id,
                         name: category.name,
+                        image: category.image
                       })
                     }}>
                       <img className="icon24" src={require('../img/edit.png')} alt="edit" />
@@ -160,16 +161,17 @@ const Category = () => {
                 <label>Tên Danh Mục</label>
                 <input
                   type="text"
-                  value={newCategory}
-                  onChange={(e) => setNewCategory(e.target.value)}
+                  value={newCategory.name}
+                  onChange={(e) => setNewCategory({ name: e.target.value, image: newCategory.image })}
                   placeholder="Nhập Tên Danh Mục"
                   required
                 />
+                <input type="file" accept="image/*" multiple onChange={(e) => setNewCategory({ name: newCategory.name, image: e.target.value })} required />
 
                 <div className="modal-actions">
                   <button type="button" onClick={() => {
                     setIsModalOpen(false)
-                    setNewCategory('')
+                    setNewCategory({ name: '', image: '' })
                   }}>Hủy</button>
                   <button type="submit" onClick={() => handleAddOrEditCategory()}>Lưu</button>
                 </div>
@@ -187,15 +189,23 @@ const Category = () => {
                 <input
                   type="text"
                   value={newCategory.name}
-                  onChange={(e) => setNewCategory({id: newCategory.id, name: e.target.value})}
+                  onChange={(e) => setNewCategory({id: newCategory.id, name: e.target.value, image: newCategory.image })}
                   placeholder="Nhập Tên Danh Mục"
                   required
                 />
-                
+                <input type="file" accept="image/*" multiple onChange={(e) => setNewCategory({id: newCategory.id, name: newCategory.name, image: e.target.value })} required />
+                <img src={newCategory.image} className="product-image-preview"
+                  style={{
+                    width: 100,
+                    height: 100,
+                    margin: 5,
+                    borderRadius: 10
+                  }}
+                />
                 <div className="modal-actions">
                   <button type="button" onClick={() => {
                     setIsModaUpdatelOpen(false)
-                    setNewCategory('')
+                    setNewCategory({ name: '', image: '' })
                   }}>Hủy</button>
                   <button type="submit" onClick={() => handleEditCategory()}>Lưu</button>
                 </div>
@@ -208,4 +218,4 @@ const Category = () => {
   );
 }
 
-export default Category;
+export default Brand;

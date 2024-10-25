@@ -6,6 +6,8 @@ import Login from './page/Login';
 import CategoryPage from './page/Category';
 import AccountPage from './page/Accounts';
 import OrderPage from './page/Order';
+import Brand from './page/Brand';
+import Charts from './page/Charts';
 const App = () => {
   return (
     <Router>
@@ -16,6 +18,8 @@ const App = () => {
         <Route path="/category" element={<CategoryPage />} /> {/* Trang sản phẩm */}
         <Route path="/account" element={<AccountPage />} />
         <Route path="/orders" element={<OrderPage />} /> 
+        <Route path="/brand" element={<Brand />} /> 
+        <Route path="/stats" element={<Charts />} /> 
         {/* Thêm các route khác nếu cần */}
       </Routes>
     </Router>

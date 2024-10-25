@@ -4,7 +4,7 @@ import '../Style/Account.css'; // Đường dẫn tới file CSS của bạn
 import { getUser } from '../API/API_User';
 
 const Account = () => {
-  const [accounts, setAccounts] = useState({ data: [] }); // Khởi tạo accounts với đối tượng có thuộc tính data là mảng
+  const [accounts, setAccounts] = useState([]); // Khởi tạo accounts với đối tượng có thuộc tính data là mảng
   const [Page, setPage] = useState(1);
   const [Limit, setLimit] = useState(20);
   const [Keywords, setKeywords] = useState('');
@@ -15,7 +15,19 @@ const Account = () => {
     // Hàm để lấy danh sách tài khoản
     getUser(Page, Limit, Keywords)
       .then((data) => {
-        setAccounts(data || { data: [] }); // Bảo đảm accounts luôn có thuộc tính data
+
+        if (data) {
+          // Lọc dữ liệu chỉ lấy những tài khoản có role = 1
+          const filteredAccounts = data?.data?.filter(account => account.role === 1);
+          setAccounts({
+            data: filteredAccounts,
+            total: data.total,
+            currentPage: data.currentPage,
+            totalPages: data.totalPages,
+          });
+        } else {
+          setAccounts({ data: [] }); // Nếu không có dữ liệu hợp lệ
+        }
       })
       .catch((error) => {
         console.error("Error fetching users:", error);
@@ -23,39 +35,7 @@ const Account = () => {
       });
   }, [Page, Limit, Keywords]);
 
-  const handleAddOrEditAccount = () => {
-    if (newAccount.id) {
-      // Chỉnh sửa tài khoản
-      setAccounts(prev => ({
-        ...prev,
-        data: prev.data.map(acc => acc.id === newAccount.id ? newAccount : acc),
-      }));
-    } else {
-      // Thêm tài khoản mới
-      const newId = accounts.data.length ? Math.max(accounts.data.map(acc => acc.id)) + 1 : 1;
-      setAccounts(prev => ({
-        ...prev,
-        data: [...prev.data, { ...newAccount, id: newId }],
-      }));
-    }
-    setIsModalOpen(false); // Đóng modal
-    setNewAccount({ id: null, name: '', password: '', phonenumber: '', Email: '' }); // Reset form
-  };
 
-  const handleEditAccount = (account) => {
-    setNewAccount(account); // Cập nhật thông tin tài khoản đang chỉnh sửa
-    setIsModalOpen(true); // Mở modal
-  };
-
-  const handleDeleteAccount = (id) => {
-    const confirmDelete = window.confirm("Bạn có chắc chắn muốn xóa Tài Khoản này?");
-    if (confirmDelete) {
-      setAccounts(prev => ({
-        ...prev,
-        data: prev.data.filter(acc => acc.id !== id), // Xóa tài khoản
-      }));
-    }
-  };
 
   return (
     <div className="background">
@@ -64,8 +44,10 @@ const Account = () => {
         <div className="header">
           <form className="search-bar">
             <div className="search-input-wrapper">
-            <img src={require('../img/search.png')} alt="bell" className="icon24" />
+              <img src={require('../img/search.png')} alt="bell" className="icon24" />
               <input
+                value={Keywords}
+                onChange={(e) => setKeywords(e.target.value)}
                 type="text"
                 name="search"
                 placeholder="Tìm kiếm sản phẩm, nhà cung cấp, đặt hàng"
@@ -96,20 +78,13 @@ const Account = () => {
               </tr>
             </thead>
             <tbody>
-              {accounts.data.map((account) => (
-                <tr key={account.id}>
+              {accounts?.data?.map((account) => (
+                <tr key={account._id}>
                   <td>{account._id}</td>
-                  <td>{account.name}</td>
+                  <td>{account.username}</td>
                   <td>{account.phone}</td>
                   <td>{account.email}</td>
-                  <td>
-                    <button className="btn-action edit" onClick={() => handleEditAccount(account)}>
-                      <img className="icon24" src={require('../img/edit.png')} alt="edit" />
-                    </button>
-                    <button className="btn-action delete" onClick={() => handleDeleteAccount(account.id)}>
-                      <img className="icon24" src={require('../img/delete.png')} alt="delete" />
-                    </button>
-                  </td>
+
                 </tr>
               ))}
             </tbody>
@@ -119,9 +94,9 @@ const Account = () => {
               if (Page === 1) return;
               setPage(Page - 1);
             }}>Trước</button>
-            <span>Trang {Page}/{Math.ceil(accounts.data.length / Limit)}</span>
+            <span>Trang {Page}/{accounts?.totalPages}</span>
             <button onClick={() => {
-              if (Page >= Math.ceil(accounts.data.length / Limit)) return;
+              if (Page >= accounts?.totalPages) return;
               setPage(Page + 1);
             }}>
               Sau
@@ -129,52 +104,6 @@ const Account = () => {
           </div>
         </div>
 
-        {/* Modal thêm hoặc chỉnh sửa tài khoản */}
-        {isModalOpen && (
-          <div className="modal">
-            <div className="modal-content">
-              <h3>{newAccount.id ? "Chỉnh Sửa Tài Khoản" : "Thêm Tài Khoản"}</h3>
-              <form onSubmit={(e) => { e.preventDefault(); handleAddOrEditAccount(); }}>
-                <label>Tên Tài Khoản</label>
-                <input
-                  type="text"
-                  value={newAccount.name || ''} // Đảm bảo có giá trị mặc định
-                  onChange={(e) => setNewAccount({ ...newAccount, name: e.target.value })}
-                  placeholder="Nhập Tên Người Dùng"
-                  required
-                />
-                <label>Mật Khẩu</label>
-                <input
-                  type="password"
-                  value={newAccount.password || ''} // Đảm bảo có giá trị mặc định
-                  onChange={(e) => setNewAccount({ ...newAccount, password: e.target.value })}
-                  placeholder="Mật Khẩu"
-                  required
-                />
-                <label>Số Điện Thoại</label>
-                <input
-                  type="text"
-                  value={newAccount.phonenumber || ''} // Đảm bảo có giá trị mặc định
-                  onChange={(e) => setNewAccount({ ...newAccount, phonenumber: e.target.value })}
-                  placeholder="Số Điện Thoại"
-                  required
-                />
-                <label>Email</label>
-                <input
-                  type="email"
-                  value={newAccount.Email || ''} // Đảm bảo có giá trị mặc định
-                  onChange={(e) => setNewAccount({ ...newAccount, Email: e.target.value })}
-                  placeholder="Email"
-                  required
-                />
-                <div className="modal-actions">
-                  <button type="button" onClick={() => setIsModalOpen(false)}>Hủy</button>
-                  <button type="submit">{newAccount.id ? "Cập Nhật" : "Thêm"}</button>
-                </div>
-              </form>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

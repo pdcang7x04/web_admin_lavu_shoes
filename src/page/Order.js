@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import Sidebar from './Sidepart';
 import '../Style/Order.css';
-import { formatDate, getOrder } from '../API/API_Order';
+import { formatDate, getOrder, updateStatusOrder } from '../API/API_Order';
 import { getUserById } from '../API/API_User';
 import { getProductById } from '../API/API_Product';
+import { Alert } from 'bootstrap';
+import { warning } from '../swal/Swal';
 
 const Order = () => {
   const [orders, setOrders] = useState([]);
@@ -18,11 +20,14 @@ const Order = () => {
 
 
 
+
+
   useEffect(() => {
     const fetchOrders = async () => {
 
       try {
         const data = await getOrder(Page, Limit, Keywords);
+        console.log('order: ', orders)
         await setOrders(data);
 
       } catch (error) {
@@ -48,21 +53,32 @@ const Order = () => {
   }, [selectedProduct]);
 
 
-  const handleAddOrEditOrder = () => {
-    if (newOrder.id) {
-      setOrders(orders.map(order => order.id === newOrder.id ? newOrder : order));
-    } else {
-      const newId = orders.length ? Math.max(orders.map(order => order.id)) + 1 : 1;
-      setOrders([...orders, { ...newOrder, id: newId }]);
-    }
-    setIsModalOpen(false);
-    setNewOrder({ id: null, customerName: '', orderDate: '', productCount: '', status: '' });
-  };
+  // const handleAddOrEditOrder = () => {
+  //   if (newOrder.id) {
+  //     setOrders(orders.map(order => order.id === newOrder.id ? newOrder : order));
+  //   } else {
+  //     const newId = orders.length ? Math.max(orders.map(order => order.id)) + 1 : 1;
+  //     setOrders([...orders, { ...newOrder, id: newId }]);
+  //   }
+  //   setIsModalOpen(false);
+  //   setNewOrder({ id: null, customerName: '', orderDate: '', productCount: '', status: '' });
+  // };
 
-  const handleEditOrder = (order) => {
-    setNewOrder(order);
-    setIsModalOpen(true);
-    console.log(order)
+  const handleEditOrder = async (id,currentStatus, paymentStatus) => {
+    try {
+      
+      if((currentStatus + 1) < paymentStatus){
+        warning("Hãy xử lý đơn hàng theo trình tự")
+        return
+      }
+      const body = { paymentStatus: paymentStatus }
+      const update = await updateStatusOrder(id, body)
+      if (update) {
+        window.location.reload()
+      }
+    } catch (error) {
+      console.log(error)
+    }
   };
 
   const handleViewProduct = (product) => {
@@ -77,34 +93,11 @@ const Order = () => {
       case 2: return "Chờ xác nhận";
       case 3: return "Đã xác nhận";
       case 4: return "Đang xử lý";
-      case 5: return "Đang giao";
-      case 6: return "Đã giao";
-      case 7: return "Đã hủy";
+      case 5: return "Đã giao";
+      case 6: return "Đã hủy";
       default: return "Không xác định";
     }
   };
-
-  //     if (value == 1 || value == 2) {
-  //       return "Chờ xác nhận"
-  //     }
-  //     if (value == 3) {
-  //       return "Đã xác nhận"
-  //     }
-  //     if (value == 4) {
-  //       return "Đang xử lý"
-  //     }
-  //     if (value == 5) {
-  //       return "Đang giao"
-  //     }
-  //     if (value == 6) {
-  //       return "Đã giao"
-  //     }
-  //     if (value == 7) {
-  //       return "Đã hủy"
-  //     }
-  //   }
-  // >>>>>>> master
-
   const statusPayment = (value) => {
     if (value >= 2 || value < 7) {
       return "Đã thanh toán"
@@ -112,6 +105,18 @@ const Order = () => {
       return "Chưa thanh toán"
     }
   }
+
+  const getPaymentMethodColor = (method) => {
+    switch (method) {
+      case 1: return "#28a745";
+      case 2: return "#28a745";
+      case 3: return "#007bff";
+      case 4: return "#ffc107";
+      case 5: return "#6c757d";
+      case 6: return "#dc3545";
+      default: return "#000";
+    }
+  };
 
   return (
     <div className="background">
@@ -122,10 +127,11 @@ const Order = () => {
             <div className="search-input-wrapper">
               <img src={require('../img/search.png')} alt="bell" className="icon24" />
               <input
+                value={Keywords}
+                onChange={(e) => setKeywords(e.target.value)}
                 type="text"
                 name="search"
                 placeholder="Tìm kiếm sản phẩm, nhà cung cấp, đặt hàng"
-                onChange={(e) => setKeywords(e.target.value)}
               />
             </div>
           </form>
@@ -138,15 +144,18 @@ const Order = () => {
           <div className="table-header">
             <span className="text_sp">Quản Lý Đơn Hàng</span>
             <div className="button_header">
-              <img className="icon20" src={require('../img/sort.png')} alt="sort" />
-              Bộ lọc
+              <button className="btn-add" onClick={() => setIsModalOpen(true)}>Thêm</button>
+              <button className="btn-filter">
+                <img className="icon20" src={require('../img/sort.png')} alt="sort" />
+                Bộ lọc
+              </button>
             </div>
           </div>
           <table className="product-table">
             <thead>
               <tr>
                 <th>ID Đơn Hàng</th>
-                <th>ID Người Mua</th>
+                <th>Tên Người Mua</th>
                 <th>Ngày Đặt Hàng</th>
                 <th>Tổng Số giá trị</th>
                 <th>Tình Trạng</th>
@@ -162,16 +171,14 @@ const Order = () => {
                 orders?.data?.map((order) => (
                   <tr key={order.id}>
                     <td>{order._id}</td>
-                    <td>{order.user.name}</td>
+                    <td>{order.user.username}</td>
                     <td>{formatDate(order.createdAt)}</td>
                     <td>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(order.totalAmount)}</td>
-                    <td className={`${order.status === 'Đã giao hàng' ? 'completed' : order.status === 'Đang xử lý' ? 'processing' : 'cancelled'}`}>
+                    <td style={{ color: getPaymentMethodColor(order?.paymentStatus) }}>
                       {statusOrder(order?.paymentStatus)}
                     </td>
                     <td>
-                      <button className="btn-action edit" onClick={() => handleEditOrder(order)}>
-                        <img className="icon24" src={require('../img/edit.png')} alt="edit" />
-                      </button>
+
                       <button className="btn-action view" onClick={() => handleViewProduct(order)}>
                         <img className="icon24" src={require('../img/image.png')} alt="view" />
                       </button>
@@ -179,7 +186,7 @@ const Order = () => {
                   </tr>
                 ))
               }
-              
+
             </tbody>
           </table>
           <div className="pagination">
@@ -187,9 +194,9 @@ const Order = () => {
               if (Page === 1) return;
               setPage(Page - 1);
             }}>Trước</button>
-            <span>Trang {Page}/{Math.ceil(orders.length / Limit)}</span>
+            <span>Trang {Page}/{orders?.totalPages}</span>
             <button onClick={() => {
-              if (Page >= Math.ceil(orders.length / Limit)) return;
+              if (Page >= orders?.totalPages) return;
               setPage(Page + 1);
             }}>
               Sau
@@ -197,23 +204,23 @@ const Order = () => {
           </div>
         </div>
 
-        {isModalOpen && (
+        {/* {isModalOpen && (
           <div className="modal">
             <div className="modal-content">
-              <h3>{newOrder.id ? "Chỉnh Sửa Đơn Hàng" : "Thêm Đơn Hàng"}</h3>
-              <form onSubmit={(e) => { e.preventDefault(); handleAddOrEditOrder(); }}>
+              <h3>Thêm Đơn Hàng</h3>
+              <form onSubmit={(e) => { e.preventDefault(); }}>
                 <label>ID Người Mua</label>
                 <input
                   type="text"
-                  value={newOrder.user.username}
-                  onChange={(e) => setNewOrder({ ...newOrder, customerName: e.target.value })}
+                  value={''}
+                  onChange={''}
                   placeholder="Nhập Tên Người Mua"
                   required
                 />
                 <label>Ngày Đặt Hàng</label>
                 <input
                   type="date"
-                  value={newOrder.orderDate}
+                  value={''}
                   onChange={(e) => setNewOrder({ ...newOrder, orderDate: e.target.value })}
                   required
                 />
@@ -245,7 +252,7 @@ const Order = () => {
               </form>
             </div>
           </div>
-        )}
+        )} */}
 
         {isViewModalOpen && selectedProduct && (
           <div className="modal">
@@ -261,7 +268,11 @@ const Order = () => {
               <div className='body-modal'>
                 <p><strong>Mã đơn hàng: </strong>{selectedProduct._id}</p>
                 <p><strong>Ngày đặt hàng: </strong>{formatDate(selectedProduct.createdAt)}</p>
-                <p><strong>Trạng thái: </strong>{statusOrder(selectedProduct.paymentStatus)}</p>
+                <p><strong>Trạng thái: </strong>
+                  <span style={{ fontWeight: 'bold', color: getPaymentMethodColor(selectedProduct.paymentStatus) }}>
+                    {statusOrder(selectedProduct.paymentStatus)}
+                  </span>
+                </p>
               </div>
               <br />
               <div className='body-modal'>
@@ -317,11 +328,15 @@ const Order = () => {
               <div className='body-modal'>
                 <p><strong>Tổng thanh toán: </strong>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(selectedProduct.totalAmount)}</p>
                 <p><strong>Phương thức thanh toán: </strong>{selectedProduct.paymentmethod}</p>
-                <p><strong>Trạng thái thanh toán: </strong>{statusPayment(selectedProduct.paymentStatus)}</p>
-                <button type="button" onClick={() => setIsViewModalOpen(false)}>Đã xác nhận</button>
-                <button type="button" onClick={() => setIsViewModalOpen(false)}>Đang xử lý</button>
-                <button type="button" onClick={() => setIsViewModalOpen(false)}>Đang giao</button>
-                <button type="button" onClick={() => setIsViewModalOpen(false)}>Hủy đơn</button>
+                <p><strong>Trạng thái thanh toán: </strong>
+                  <span style={{fontWeight: 'bold', color: getPaymentMethodColor(selectedProduct.paymentStatus) }}>
+                    {statusPayment(selectedProduct.paymentStatus)}
+                  </span>
+                </p>
+                <button type="button" onClick={() => handleEditOrder(selectedProduct._id, selectedProduct.paymentStatus, 3)}>Đã xác nhận</button>
+                <button type="button" onClick={() => handleEditOrder(selectedProduct._id, selectedProduct.paymentStatus, 4)}>Đang xử lý</button>
+                <button type="button" onClick={() => handleEditOrder(selectedProduct._id, selectedProduct.paymentStatus, 5)}>Đã giao</button>
+                <button type="button" onClick={() => handleEditOrder(selectedProduct._id, selectedProduct.paymentStatus, 6)}>Hủy đơn</button>
               </div>
               <br />
 

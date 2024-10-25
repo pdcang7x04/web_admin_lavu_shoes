@@ -28,4 +28,25 @@ const getOrder = async (page, limit, keywords) => {
     }
 }
 
-export { getOrder, formatDate };
+const updateStatusOrder = async (id, body) => {
+    try {
+        const response = await fetch(
+            `http://localhost:3000/orders/updateStatusOrder/${id}`,
+            {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            }
+        )
+        const result = await response.json();
+        console.log(result);
+        if (result.status) {
+            return result.data
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+
+export { getOrder, formatDate, updateStatusOrder };

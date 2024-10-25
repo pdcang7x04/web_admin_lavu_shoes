@@ -23,7 +23,7 @@ const Sidebar = () => {
         <span className="textLogo">LAVU’S SHOESHOP</span>
       </div>
       <ul className="ul_1">
-        {['/products', '/category', '/account', '/orders', '/stats'].map((path, index) => (
+        {['/products', '/category', '/brand', '/account', '/orders', '/stats'].map((path, index) => (
           <li key={index} className="li">
             <Link
               to={path}
@@ -33,6 +33,7 @@ const Sidebar = () => {
               <img
                 src={path === '/products' ? product_cart :
                      path === '/category' ? product_cart :
+                     path === '/brand' ? product_cart :
                      path === '/account' ? person :
                      path === '/orders' ? box :
                      bar_chart}
@@ -41,6 +42,7 @@ const Sidebar = () => {
               />
               <span>{path === '/products' ? 'Sản Phẩm' :
                       path === '/category' ? 'Danh Mục Sản Phẩm' :
+                      path === '/brand' ? 'Danh Mục Nhãn Hàng' :
                       path === '/account' ? 'Tài Khoản' :
                       path === '/orders' ? 'Đơn Hàng' :
                       'Thống Kê'}</span>
@@ -57,7 +59,7 @@ const Sidebar = () => {
           </Link>
         </li>
         <li className="li">
-          <Link to="/logout" className="link" onClick={() => handleClick('/logout')}>
+          <Link to="/" className="link" onClick={() => handleClick('/')}>
             <img src={logout} alt='logout' className="icon" />
             <span>Đăng Xuất</span>
           </Link>
