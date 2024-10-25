@@ -21,4 +21,24 @@ const getBrand = async (page, limit, keywords) => {
     }
 }
 
-export { getBrand };
+const getAllBrand = async () => {
+    try {
+        const response = await fetch(
+            `http://localhost:3000/brands/getBrand`,
+            {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' },
+            }
+        )
+        const result = await response.json();
+        console.log(result);
+        if (result.status) {
+            return result.data
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+
+export { getBrand, getAllBrand };

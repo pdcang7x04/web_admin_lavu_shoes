@@ -3,6 +3,8 @@ import "../Style/Product.css";
 import Sidebar from "./Sidepart";
 import { success } from "../swal/Swal";
 import ProductModal from "../Modal/ProductModal.js"; // Import component modal
+import { addNewProduct, deleteProduct } from "../API/API_Product.js";
+import UpdateProductModal from "../Modal/UpdateProductModal.js";
 
 const ProductList = () => {
   const [products, setProducts] = useState({});
@@ -10,18 +12,8 @@ const ProductList = () => {
   const [limit, setlimit] = useState(6);
   const [keywords, setkeywords] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [newProduct, setNewProduct] = useState({ 
-    name: '', 
-    price: '', 
-    currentQuantity: '', 
-    description: '', 
-    images: '', 
-    colors: '', 
-    sizes: '', 
-    status: '', 
-    brand: '', 
-    category: ''
-  });
+  const [isModalUpdateOpen, setIsModalUpdateOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
 
   const fetchProducts = async () => {
     try {
@@ -45,17 +37,12 @@ const ProductList = () => {
     fetchProducts();
   }, [Page, limit, keywords]);
 
-  const handleAddProduct = () => {
-    const newId = products.length + 1;
-    const productToAdd = { ...newProduct, id: newId };
-    setProducts([...products, productToAdd]);
-    setIsModalOpen(false); 
-    setNewProduct({ name: "", category: "", price: "", stock: "", image: null });
-  };
 
-  const handleImageChange = (e) => {
-    setNewProduct({ ...newProduct, image: e.target.files[0] });
+  const handleEditProduct = (product) => {
+    setSelectedProduct(product); // Set the selected product
+    setIsModalUpdateOpen(true); // Open the modal
   };
+  // console.log('product: ', ProductDetail)
 
   return (
     <div className="background">
@@ -105,7 +92,7 @@ const ProductList = () => {
             </thead>
             <tbody>
               {products?.data?.data?.map((product) => (
-                <tr key={product.id}>
+                <tr key={product._id}>
                   <td>{product.name}</td>
                   <td>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.price)}</td>
                   <td>{product.currentQuantity} Sản phẩm</td>
@@ -115,10 +102,14 @@ const ProductList = () => {
                   </td>
                   <td>
                     <div className="btn-group">
-                      <button className="btn-action edit">
+                      <button className="btn-action edit"
+                        onClick={() => {
+                          handleEditProduct(product)
+                        }}
+                      >
                         <img className="icon24" src={require('../img/edit.png')} alt="edit" />
                       </button>
-                      <button className="btn-action delete">
+                      <button className="btn-action delete" onClick={() => deleteProduct(product._id)}>
                         <img className="icon24" src={require('../img/delete.png')} alt="delete" />
                       </button>
                     </div>
@@ -129,12 +120,12 @@ const ProductList = () => {
           </table>
           <div className="pagination">
             <button onClick={() => {
-              if (Page === 1) return; 
+              if (Page === 1) return;
               setPage(Page - 1);
             }}>Trước</button>
             <span>Trang {Page}/{products?.data?.totalPages}</span>
             <button onClick={() => {
-              if (Page >= products?.data?.totalPages) return; 
+              if (Page >= products?.data?.totalPages) return;
               setPage(Page + 1);
             }}>
               Sau
@@ -142,15 +133,20 @@ const ProductList = () => {
           </div>
         </div>
 
-        {/* Sử dụng component ProductModal */}
-        <ProductModal 
+        {/* modal thêm sp */}
+        <ProductModal
           isModalOpen={isModalOpen}
-          setIsModalOpen={setIsModalOpen}
-          newProduct={newProduct}
-          setNewProduct={setNewProduct}
-          handleAddProduct={handleAddProduct}
-          handleImageChange={handleImageChange}
+          setIsModalOpen={(value) => setIsModalOpen(value)}
+          selectedProduct={selectedProduct}
         />
+
+        <UpdateProductModal
+          isModalOpen={isModalUpdateOpen}
+          setIsModalOpen={(value) => setIsModalUpdateOpen(value)}
+          selectedProduct={selectedProduct}
+        />
+
+
       </div>
     </div>
   );

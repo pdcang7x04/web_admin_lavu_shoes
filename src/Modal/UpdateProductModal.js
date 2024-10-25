@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react";
 import '../Modal/ProductModal.css';
 import { getAllBrand } from "../API/API_Brand";
 import { getCategory } from "../API/API_Category";
-import { addNewProduct } from "../API/API_Product";
+import { addNewProduct, updateProduct } from "../API/API_Product";
 
-const ProductModal = (props) => {
-  const { isModalOpen, setIsModalOpen } = props
+const UpdateProductModal = (props) => {
+  const { isModalOpen, setIsModalOpen, selectedProduct } = props
 
   const [Name, setName] = useState("")
   const [Price, setPrice] = useState(0)
@@ -20,6 +20,28 @@ const ProductModal = (props) => {
   const [SelectedBrand, setSelectedBrand] = useState('')
   const [Category, setCategory] = useState([])
   const [SelectedCate, setSelectedCate] = useState('')
+
+  useEffect(() => {
+    if (selectedProduct) {
+      setName(selectedProduct.name || "");
+      setPrice(selectedProduct.price || 0);
+      setCurrentQuantity(selectedProduct.currentQuantity || 0);
+      setDescription(selectedProduct.description || '');
+      
+      setColor(selectedProduct.color || []);
+      setSize(selectedProduct.size || []);
+      setStatus(selectedProduct.status || 1);
+      setSelectedBrand(selectedProduct.brand._id || '');
+      setSelectedCate(selectedProduct.category._id || '');
+        
+       
+    }else{
+      return
+    }
+    
+  }, [selectedProduct]);
+
+  console.log('product: ', selectedProduct)
 
   const handleImageChange = (event) => {
     const files = Array.from(event.target.files); // Chuyển đổi FileList thành mảng
@@ -85,7 +107,7 @@ const ProductModal = (props) => {
         category: SelectedCate
       }
       // console.log('body: ', body)
-      addNewProduct(body)
+      updateProduct(selectedProduct._id, body)
       setIsModalOpen(false)
       window.location.reload()
       resetForm()
@@ -226,4 +248,4 @@ const ProductModal = (props) => {
   );
 };
 
-export default ProductModal;
+export default UpdateProductModal;
