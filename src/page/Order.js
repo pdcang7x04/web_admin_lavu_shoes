@@ -64,10 +64,17 @@ const Order = () => {
   //   setNewOrder({ id: null, customerName: '', orderDate: '', productCount: '', status: '' });
   // };
 
-  const handleEditOrder = async (id,currentStatus, paymentStatus) => {
+  const handleEditOrder = async (id, currentStatus, paymentStatus) => {
     try {
-      
-      if((currentStatus + 1) < paymentStatus){
+      if (currentStatus <= 2 && paymentStatus == 6) {
+        const body = { paymentStatus: paymentStatus }
+        const update = await updateStatusOrder(id, body)
+        if (update) {
+          window.location.reload()
+        }
+        return
+      }
+      if ((currentStatus + 1) < paymentStatus) {
         warning("Hãy xử lý đơn hàng theo trình tự")
         return
       }
@@ -329,7 +336,7 @@ const Order = () => {
                 <p><strong>Tổng thanh toán: </strong>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(selectedProduct.totalAmount)}</p>
                 <p><strong>Phương thức thanh toán: </strong>{selectedProduct.paymentmethod}</p>
                 <p><strong>Trạng thái thanh toán: </strong>
-                  <span style={{fontWeight: 'bold', color: getPaymentMethodColor(selectedProduct.paymentStatus) }}>
+                  <span style={{ fontWeight: 'bold', color: getPaymentMethodColor(selectedProduct.paymentStatus) }}>
                     {statusPayment(selectedProduct.paymentStatus)}
                   </span>
                 </p>
