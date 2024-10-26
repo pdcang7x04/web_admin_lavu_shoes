@@ -28,6 +28,26 @@ const getOrder = async (page, limit, keywords) => {
     }
 }
 
+const getAllOrder = async () => {
+    try {
+        const response = await fetch(
+            `http://localhost:3000/orders/getAllOrder`,
+            {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' },
+            }
+        )
+        const result = await response.json();
+        console.log(result);
+        if (result.status) {
+            return result.data
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+
 const updateStatusOrder = async (id, body) => {
     try {
         const response = await fetch(
@@ -49,4 +69,4 @@ const updateStatusOrder = async (id, body) => {
 }
 
 
-export { getOrder, formatDate, updateStatusOrder };
+export { getOrder, formatDate, updateStatusOrder, getAllOrder };

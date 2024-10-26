@@ -6,6 +6,13 @@ import ProductModal from "../Modal/ProductModal.js"; // Import component modal
 import { addNewProduct, deleteProduct } from "../API/API_Product.js";
 import UpdateProductModal from "../Modal/UpdateProductModal.js";
 import SalesOverview from "../component/SalesOverview.js";
+import InventorySummary from "../component/InventorySummary.js";
+import PurchaseOverview from "../component/PurchaseOverview.js";
+import ProductSummary from "../component/ProductSummary.js";
+import SalesAndPurchase from "../component/SalesAndPurchase.js";
+import OrderSummary from "../component/OrderSummary.js";
+import TopSellingStock from "../component/TopSellingStock.js";
+import LowQuantityStock from "../component/LowQuantityStock.js";
 
 const Stats = () => {
   
@@ -33,8 +40,27 @@ const Stats = () => {
         <div className="product-container">
           <SalesOverview/>
         </div>
-
-        
+        <div className="product-container">
+          <InventorySummary/>
+        </div>
+        <div className="product-container">
+          <PurchaseOverview/>
+        </div>
+        <div className="product-container">
+          <ProductSummary/>
+        </div>
+        <div className="product-container">
+          <SalesAndPurchase/>
+        </div>
+        <div className="product-container">
+          <OrderSummary/>
+        </div>
+        <div className="product-container">
+          <TopSellingStock/>
+        </div>
+        <div className="product-container">
+          <LowQuantityStock/>
+        </div>
 
       </div>
     </div>
