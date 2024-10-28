@@ -3,6 +3,7 @@ import '../Modal/ProductModal.css';
 import { getAllBrand } from "../API/API_Brand";
 import { getCategory } from "../API/API_Category";
 import { addNewProduct } from "../API/API_Product";
+import { validatePrice } from "../middlewares/Validate";
 
 const ProductModal = (props) => {
   const { isModalOpen, setIsModalOpen } = props

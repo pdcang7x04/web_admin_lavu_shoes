@@ -37,4 +37,92 @@ export const validatePassword = (password) => {
     return true;
 }
 
+const isPositiveNumber = (value) => {
+    return !isNaN(value) && Number(value) > 0;
+};
+
+const isNonEmptyString = (value) => {
+    return value.trim().length > 0;
+};
+
+export const validateName = (name) => {
+    if (!isNonEmptyString(name)) {
+        warning('Tên sản phẩm không được để trống');
+        return false;
+    }
+    return true;
+};
+
+export const validatePrice = (price) => {
+    if (!isPositiveNumber(price)) {
+        warning('Giá sản phẩm phải là số dương');
+        return false;
+    }
+    return true;
+};
+
+export const validateCurrentQuantity = (quantity) => {
+    if (!isPositiveNumber(quantity)) {
+        warning('Số lượng hiện tại phải là số dương');
+        return false;
+    }
+    return true;
+};
+
+export const validateDescription = (description) => {
+    if (!isNonEmptyString(description)) {
+        warning('Mô tả không được để trống');
+        return false;
+    }
+    return true;
+};
+
+export const validateImage = (image) => {
+    if (image.length === 0) {
+        warning('Vui lòng chọn ít nhất một hình ảnh');
+        return false;
+    }
+    return true;
+};
+
+export const validateColor = (colors) => {
+    if (colors.length === 0) {
+        warning('Vui lòng chọn ít nhất một màu');
+        return false;
+    }
+    return true;
+};
+
+export const validateSize = (sizes) => {
+    if (sizes.length === 0) {
+        warning('Vui lòng chọn ít nhất một kích thước');
+        return false;
+    }
+    return true;
+};
+
+export const validateStatus = (status) => {
+    if (![1,2,3,4].includes(status)) {
+        warning('Trạng thái không hợp lệ');
+        return false;
+    }
+    return true;
+};
+
+export const validateBrand = (brand) => {
+    if (!isNonEmptyString(brand)) {
+        warning('Vui lòng chọn một thương hiệu');
+        return false;
+    }
+    return true;
+};
+
+export const validateCategory = (category) => {
+    if (!isNonEmptyString(category)) {
+        warning('Vui lòng chọn một danh mục');
+        return false;
+    }
+    return true;
+};
+
 

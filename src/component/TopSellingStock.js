@@ -1,25 +1,20 @@
 import React, { useEffect, useState } from 'react';
+import { getAllProduct } from '../API/API_Product';
 
 const TopSellingStock = () => {
-    const [products, setProducts] = useState({});
+    const [products, setProducts] = useState([]); // Change to an array
     const [page, setPage] = useState(1);
-    const [limit, setLimit] = useState(4);
+    const [limit, setLimit] = useState(30);
     const [keywords, setKeywords] = useState('');
 
     const fetchProducts = async () => {
         try {
-            const response = await fetch(
-                `http://localhost:3000/products/getProduct?page=${page}&limit=${limit}&keywords=${keywords}`,
-                {
-                    method: 'GET',
-                    headers: { 'Content-Type': 'application/json' },
-                }
-            );
-            const result = await response.json();
-            if (result.status) {
+            const result = await getAllProduct();
+            if (result) {
                 // Sort products by quantitySold in descending order
-                const sortedProducts = result.data.data.sort((a, b) => b.quantitySold - a.quantitySold);
-                setProducts({ ...result, data: { ...result.data, data: sortedProducts } });
+                const sortedProducts = result.sort((a, b) => b.quantitySold - a.quantitySold);
+                const topProducts = sortedProducts.slice(0, 4);
+                setProducts(topProducts);
             }
         } catch (error) {
             console.error("Error fetching products:", error);
@@ -28,22 +23,22 @@ const TopSellingStock = () => {
 
     useEffect(() => {
         fetchProducts();
-    }, [page, limit, keywords]);
+    }, []);
 
     return (
         <div>
-            <h4>hàng bán chạy</h4>
+            <h4>Hàng Bán Chạy</h4>
             <table className="product-table">
                 <thead>
                     <tr>
-                        <th>Tên sản phẩm</th>
-                        <th>Đã bán</th>
-                        <th>Số lượng còn lại</th>
+                        <th>Tên Sản Phẩm</th>
+                        <th>Đã Bán</th>
+                        <th>Số Lượng Còn Lại</th>
                         <th>Giá</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {products?.data?.data?.map((product) => (
+                    {products.map((product) => (
                         <tr key={product._id}>
                             <td>{product.name}</td>
                             <td>{product.quantitySold}</td>
