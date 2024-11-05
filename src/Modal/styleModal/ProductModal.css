@@ -15,8 +15,7 @@
 /* Khung modal */
 .modal-content {
     background-color: white;
-    border-radius: 8px;
-    border: 2px solid red; /* Đường viền đỏ cho toàn bộ modal */
+    border-radius: 5px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
     width: 1200px; /* Chiều rộng modal lớn hơn */
     max-width: 95%; /* Đảm bảo modal không quá rộng */

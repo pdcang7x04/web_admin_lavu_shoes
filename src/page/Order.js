@@ -11,7 +11,7 @@ const Order = () => {
   const [orders, setOrders] = useState([]);
   const [Product, setProduct] = useState([])
   const [Page, setPage] = useState(1);
-  const [Limit, setLimit] = useState(20);
+  const [Limit, setLimit] = useState(6);
   const [Keywords, setKeywords] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
@@ -51,18 +51,6 @@ const Order = () => {
 
     fetchProducts();
   }, [selectedProduct]);
-
-
-  // const handleAddOrEditOrder = () => {
-  //   if (newOrder.id) {
-  //     setOrders(orders.map(order => order.id === newOrder.id ? newOrder : order));
-  //   } else {
-  //     const newId = orders.length ? Math.max(orders.map(order => order.id)) + 1 : 1;
-  //     setOrders([...orders, { ...newOrder, id: newId }]);
-  //   }
-  //   setIsModalOpen(false);
-  //   setNewOrder({ id: null, customerName: '', orderDate: '', productCount: '', status: '' });
-  // };
 
   const handleEditOrder = async (id, currentStatus, paymentStatus) => {
     try {
@@ -151,7 +139,6 @@ const Order = () => {
           <div className="table-header">
             <span className="text_sp">Quản Lý Đơn Hàng</span>
             <div className="button_header">
-              <button className="btn-add" onClick={() => setIsModalOpen(true)}>Thêm</button>
               <button className="btn-filter">
                 <img className="icon20" src={require('../img/sort.png')} alt="sort" />
                 Bộ lọc
@@ -187,7 +174,7 @@ const Order = () => {
                     <td>
 
                       <button className="btn-action view" onClick={() => handleViewProduct(order)}>
-                        <img className="icon24" src={require('../img/image.png')} alt="view" />
+                        <img className="icon24" src={require('../img/overview.png')} alt="view" />
                       </button>
                     </td>
                   </tr>
@@ -211,55 +198,7 @@ const Order = () => {
           </div>
         </div>
 
-        {/* {isModalOpen && (
-          <div className="modal">
-            <div className="modal-content">
-              <h3>Thêm Đơn Hàng</h3>
-              <form onSubmit={(e) => { e.preventDefault(); }}>
-                <label>ID Người Mua</label>
-                <input
-                  type="text"
-                  value={''}
-                  onChange={''}
-                  placeholder="Nhập Tên Người Mua"
-                  required
-                />
-                <label>Ngày Đặt Hàng</label>
-                <input
-                  type="date"
-                  value={''}
-                  onChange={(e) => setNewOrder({ ...newOrder, orderDate: e.target.value })}
-                  required
-                />
-                <label>Tổng Số Sản Phẩm</label>
-                <input
-                  type="number"
-                  value={newOrder.productCount}
-                  onChange={(e) => setNewOrder({ ...newOrder, productCount: e.target.value })}
-                  placeholder="Nhập Số Sản Phẩm"
-                  required
-                />
-                <label>Tình Trạng</label>
-                <select
-                  value={newOrder.status}
-                  onChange={(e) => setNewOrder({ ...newOrder, status: e.target.value })}
-                  required
-                >
-                  <option value="">Chọn Tình Trạng</option>
-                  <option value="Đã giao hàng">Đã giao hàng</option>
-                  <option value="Đang xử lý">Đang xử lý</option>
-                  <option value="Đã hủy">Đã hủy</option>
-                  <option value="Đang giao hàng">Đang giao hàng</option>
-                </select>
-
-                <div className="modal-actions">
-                  <button type="button" onClick={() => setIsModalOpen(false)}>Hủy</button>
-                  <button type="submit">{newOrder.id ? "Cập Nhật" : "Thêm"}</button>
-                </div>
-              </form>
-            </div>
-          </div>
-        )} */}
+        
 
         {isViewModalOpen && selectedProduct && (
           <div className="modal">

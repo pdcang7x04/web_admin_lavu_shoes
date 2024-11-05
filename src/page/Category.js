@@ -1,69 +1,79 @@
 import React, { useEffect, useState } from 'react';
-import Sidebar from './Sidepart'; // Đường dẫn tới thành phần Sidebar
-import '../Style/Category.css'; // Đường dẫn tới file CSS của bạn
+import Sidebar from './Sidepart';
+import '../Style/Category.css';
+import AddModal from '../Modal/AddOrEditModal';
+import EditModal from '../Modal/UpdateModal';
 import { addNewCategory, deleteCategory, getCategoryByQuery, updateCategory } from '../API/API_Category';
+import { getBrand, addNewBrand, deleteBrand, updateBrand } from '../API/API_Brand';
 
-
-const Category = () => {
-  const [categories, setCategories] = useState([]);
+const CategoryAndBrand = () => {
+  const [isCategoryPage, setIsCategoryPage] = useState(true);
+  const [data, setData] = useState([]);
   const [Page, setPage] = useState(1);
-  const [Limit, setLimit] = useState(20)
-  const [Keywords, setKeywords] = useState('')
-  const [isModalOpen, setIsModalOpen] = useState(false); // Trạng thái modal
-  const [isModalUpdateOpen, setIsModaUpdatelOpen] = useState(false); // Trạng thái modal
-  const [newCategory, setNewCategory] = useState(''); // Trạng thái danh mục mới hoặc đang chỉnh sửa
+  const [Limit, setLimit] = useState(3);
+  const [Keywords, setKeywords] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalUpdateOpen, setIsModalUpdateOpen] = useState(false);
+  const [newItem, setNewItem] = useState({ name: '', image: '' });
 
   useEffect(() => {
-    getCategoryByQuery(Page, Limit, Keywords)
-      .then((data) => {
-        setCategories(data)
-      })
-  }, [Page, Limit, Keywords]);
-
-
-  const handleAddOrEditCategory = async () => {
-    try {
-      const addnew = await addNewCategory({name : newCategory})
-      if (addnew) {
-        setNewCategory('')
-        setIsModalOpen(false)
-        window.location.reload()
+    const fetchData = async () => {
+      if (isCategoryPage) {
+        const data = await getCategoryByQuery(Page, Limit, Keywords);
+        setData(data);
       } else {
-        return
+        const data = await getBrand(Page, Limit, Keywords);
+        setData(data);
+      }
+    };
+    
+    fetchData();
+  }, [Page, Limit, Keywords, isCategoryPage]);
+
+  const handleAddOrEditItem = async () => {
+    try {
+      const addNew = isCategoryPage
+        ? await addNewCategory({ name: newItem.name })
+        : await addNewBrand(newItem);
+
+      if (addNew) {
+        setNewItem({ name: '', image: '' });
+        setIsModalOpen(false);
+        window.location.reload();
       }
     } catch (error) {
-      console.log(error.message)
+      console.error(error.message);
     }
   };
 
-  const handleEditCategory = async () => {
+  const handleEditItem = async () => {
     try {
       const body = {
-        name: newCategory.name,
-      }
-      const update = await updateCategory(newCategory.id, body)
-      if(update){
-        setNewCategory({})
-        setIsModaUpdatelOpen(false)
-        window.location.reload()
-      }else{
-        return
+        name: newItem.name,
+        image: newItem.image,
+      };
+      const update = isCategoryPage
+        ? await updateCategory(newItem.id, { name: newItem.name })
+        : await updateBrand(newItem.id, body);
+
+      if (update) {
+        setNewItem({ name: '', image: '' });
+        setIsModalUpdateOpen(false);
+        window.location.reload();
       }
     } catch (error) {
-      console.log(error.message)
+      console.error(error.message);
     }
   };
 
-  const handleDeleteCategory = async (id) => {
+  const handleDeleteItem = async (id) => {
     try {
-      const deleteitem = await deleteCategory(id)
-      if (deleteitem) {
-        window.location.reload()
-      } else {
-        return
+      const deleteItem = isCategoryPage ? await deleteCategory(id) : await deleteBrand(id);
+      if (deleteItem) {
+        window.location.reload();
       }
     } catch (error) {
-      console.log(error.message)
+      console.error(error.message);
     }
   };
 
@@ -74,13 +84,12 @@ const Category = () => {
         <div className="header">
           <form className="search-bar">
             <div className="search-input-wrapper">
-              <img src={require('../img/search.png')} alt="bell" className="icon24" />
+              <img src={require('../img/search.png')} alt="search" className="icon24" />
               <input
                 value={Keywords}
                 onChange={(e) => setKeywords(e.target.value)}
                 type="text"
-                name="search"
-                placeholder="Tìm kiếm sản phẩm, nhà cung cấp, đặt hàng"
+                placeholder="Tìm kiếm"
               />
             </div>
           </form>
@@ -91,40 +100,43 @@ const Category = () => {
         </div>
         <div className="product-container">
           <div className="table-header">
-            <span className="text_sp">Danh Mục Sản Phẩm</span>
+            <span className="text_sp">{isCategoryPage ? 'Danh Mục Sản Phẩm' : 'Danh Sách Nhãn Hàng'}</span>
             <div className="button_header">
               <button className="btn-add" onClick={() => setIsModalOpen(true)}>Thêm</button>
-              <button className="btn-filter">
-                <img className="icon20" src={require('../img/sort.png')} alt="sort" />
-                Bộ lọc
-              </button>
               <button className="btn-download">Tải tất cả</button>
+              <button onClick={() => setIsCategoryPage(!isCategoryPage)}>
+            {isCategoryPage ? 'Xem nhãn hàng' : 'Xem danh mục'}
+          </button>
             </div>
+            
           </div>
           <table className="product-table">
             <thead>
               <tr>
-                <th>ID Danh Mục</th>
-                <th>Tên Danh Mục</th>
-                <th></th>
+                <th>ID</th>
+                <th>Tên</th>
+                {!isCategoryPage && <th>Hình Ảnh</th>}
+                <th>Hành Động</th>
               </tr>
             </thead>
             <tbody>
-              {categories?.data?.map((category) => (
-                <tr key={category.id}>
-                  <td>{category._id}</td>
-                  <td>{category.name}</td>
+              {data?.data?.map((item) => (
+                <tr key={item._id}>
+                  <td>{item._id}</td>
+                  <td>{item.name}</td>
+                  {!isCategoryPage && (
+                    <td>
+                      <img src={item.image} alt={item.name} className="product-image-preview" />
+                    </td>
+                  )}
                   <td>
                     <button className="btn-action edit" onClick={() => {
-                      setIsModaUpdatelOpen(true)
-                      setNewCategory({
-                        id: category._id,
-                        name: category.name,
-                      })
+                      setIsModalUpdateOpen(true);
+                      setNewItem({ id: item._id, name: item.name, image: item.image });
                     }}>
                       <img className="icon24" src={require('../img/edit.png')} alt="edit" />
                     </button>
-                    <button className="btn-action delete" onClick={() => handleDeleteCategory(category._id)}>
+                    <button className="btn-action delete" onClick={() => handleDeleteItem(item._id)}>
                       <img className="icon24" src={require('../img/delete.png')} alt="delete" />
                     </button>
                   </td>
@@ -133,79 +145,34 @@ const Category = () => {
             </tbody>
           </table>
           <div className="pagination">
-            <button onClick={() => {
-              if (Page == 1) {
-                return; // Quay lại trang trước
-              }
-              setPage(Page - 1)
-            }}>Trước</button>
-            <span>Trang {Page}/ {categories?.totalPages}</span>
-            <button onClick={() => {
-              if (Page >= categories?.totalPages) {
-                return // Chuyển đến trang tiếp theo
-              }
-              setPage(Page + 1)
-            }}>
-              Sau
-            </button>
+            <button onClick={() => Page > 1 && setPage(Page - 1)}>Trước</button>
+            <span>Trang {Page} / {data?.totalPages}</span>
+            <button onClick={() => Page < data?.totalPages && setPage(Page + 1)}>Sau</button>
           </div>
         </div>
-
-        {/* Modal thêm hoặc chỉnh sửa danh mục */}
+        
         {isModalOpen && (
-          <div className="modal">
-            <div className="modal-content">
-              <h3>Thêm Danh Mục</h3>
-              <form onSubmit={(e) => { e.preventDefault(); handleAddOrEditCategory(); }}>
-                <label>Tên Danh Mục</label>
-                <input
-                  type="text"
-                  value={newCategory}
-                  onChange={(e) => setNewCategory(e.target.value)}
-                  placeholder="Nhập Tên Danh Mục"
-                  required
-                />
-
-                <div className="modal-actions">
-                  <button type="button" onClick={() => {
-                    setIsModalOpen(false)
-                    setNewCategory('')
-                  }}>Hủy</button>
-                  <button type="submit" onClick={() => handleAddOrEditCategory()}>Lưu</button>
-                </div>
-              </form>
-            </div>
-          </div>
+          <AddModal
+            isCategoryPage={isCategoryPage}
+            newItem={newItem}
+            setNewItem={setNewItem}
+            handleAddOrEditItem={handleAddOrEditItem}
+            setIsModalOpen={setIsModalOpen}
+          />
         )}
 
         {isModalUpdateOpen && (
-          <div className="modal">
-            <div className="modal-content">
-              <h3>Thêm Danh Mục</h3>
-              <form onSubmit={(e) => { e.preventDefault(); handleAddOrEditCategory(); }}>
-                <label>Tên Danh Mục</label>
-                <input
-                  type="text"
-                  value={newCategory.name}
-                  onChange={(e) => setNewCategory({id: newCategory.id, name: e.target.value})}
-                  placeholder="Nhập Tên Danh Mục"
-                  required
-                />
-                
-                <div className="modal-actions">
-                  <button type="button" onClick={() => {
-                    setIsModaUpdatelOpen(false)
-                    setNewCategory('')
-                  }}>Hủy</button>
-                  <button type="submit" onClick={() => handleEditCategory()}>Lưu</button>
-                </div>
-              </form>
-            </div>
-          </div>
+          <EditModal
+            isCategoryPage={isCategoryPage}
+            newItem={newItem}
+            setNewItem={setNewItem}
+            handleEditItem={handleEditItem}
+            setIsModalUpdateOpen={setIsModalUpdateOpen}
+          />
         )}
       </div>
     </div>
   );
-}
+};
 
-export default Category;
+export default CategoryAndBrand;

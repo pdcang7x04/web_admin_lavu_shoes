@@ -51,7 +51,12 @@
     height: 24px;
     margin-right: 10px;
     transition: filter 0.3s;
-  }
+    filter: grayscale(100%) brightness(0); /* Mặc định icon có màu đen */
+}
+
+.icon:hover, .activeLink .icon {
+    filter: none; /* Trở về màu gốc khi di chuột hoặc khi đang active */
+}
   
   .link {
     display: flex;
@@ -64,8 +69,7 @@
   }
   
   .activeLink {
-    background-color: #F15E2B;
-    color: #FFFFFF;
+    color: #F15E2B;
   }
   
   .ul2 {
