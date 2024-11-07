@@ -47,7 +47,7 @@ const isNonEmptyString = (value) => {
 
 export const validateName = (name) => {
     if (!isNonEmptyString(name)) {
-        warning('Tên sản phẩm không được để trống');
+        Alert('Tên sản phẩm không được để trống');
         return false;
     }
     return true;

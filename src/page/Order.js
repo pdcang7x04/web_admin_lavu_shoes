@@ -11,7 +11,7 @@ const Order = () => {
   const [orders, setOrders] = useState([]);
   const [Product, setProduct] = useState([])
   const [Page, setPage] = useState(1);
-  const [Limit, setLimit] = useState(20);
+  const [Limit, setLimit] = useState(6);
   const [Keywords, setKeywords] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);

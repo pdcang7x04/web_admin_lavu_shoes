@@ -164,7 +164,7 @@ const ProductModal = (props) => {
           />
           <input type="file" accept="image/*" multiple onChange={(e) => setColorInput({ image: e.target.value })} required/>
           
-          <button onClick={handleAddColor}>Thêm Màu</button>
+          <button type="button" onClick={handleAddColor}>Thêm Màu</button>
           {Array.isArray(Color) && Color.length > 0 ? (
             Color.map((item, index) => (
               <tr key={index}>
