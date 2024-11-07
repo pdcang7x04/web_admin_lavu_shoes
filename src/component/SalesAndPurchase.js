@@ -31,6 +31,7 @@ const SalesAndPurchase = () => {
                         const revenue = monthData.revenue; // Assuming revenue is available
                         const profit = monthData.profit; // Assuming profit is available
 
+                        console.log('doanh thu: ', revenue)
                         tempMonths.push(month);
                         tempSales.push(sales);
                         tempPurchase.push(purchase);

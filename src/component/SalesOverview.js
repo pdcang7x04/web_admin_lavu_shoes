@@ -5,7 +5,7 @@ const SalesOverview = () => {
   const [Sales, setSales] = useState(0)
   const [Revenue, setRevenue] = useState(0)
   const [Profit, setProfit] = useState(0)
-  const [Cost, setCost] = useState(5000000)
+  const [Cost, setCost] = useState(0)
   const [CostInput, setCostInput] = useState(Number(0))
 
   // tính tổng toàn bộ số liệu ko phân theo thời gian

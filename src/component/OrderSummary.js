@@ -32,10 +32,10 @@ const OrderSummary = () => {
                 }
 
                 setOrderData({
-                    labels: ['Aug', 'Sep', tempLabels],
-                    ordered: [30,52,tempOrdered],
-                    delivered: [28,48,tempDelivered],
-                    canceled: [10,20,tempCanceled]
+                    labels: ['Aug', 'Sep', ...tempLabels],
+                    ordered: [30,52,...tempOrdered],
+                    delivered: [28,48,...tempDelivered],
+                    canceled: [10,20,...tempCanceled]
                 });
             }
         } catch (error) {
@@ -46,7 +46,7 @@ const OrderSummary = () => {
     useEffect(() => {
         fetchGetOrderSummary();
     }, []);
-
+    console.log('Đã giao: ', orderData.delivered)
     useEffect(() => {
         const ctx = document.getElementById('myChart2').getContext('2d');
         const myChart = new Chart(ctx, {
