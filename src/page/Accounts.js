@@ -6,7 +6,7 @@ import { getUser } from '../API/API_User';
 const Account = () => {
   const [accounts, setAccounts] = useState([]); // Khởi tạo accounts với đối tượng có thuộc tính data là mảng
   const [Page, setPage] = useState(1);
-  const [Limit, setLimit] = useState(20);
+  const [Limit, setLimit] = useState(6);
   const [Keywords, setKeywords] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false); // Trạng thái modal
   const [newAccount, setNewAccount] = useState({ id: null, name: '', password: '', phonenumber: '', Email: '' }); // Trạng thái tài khoản mới hoặc đang chỉnh sửa

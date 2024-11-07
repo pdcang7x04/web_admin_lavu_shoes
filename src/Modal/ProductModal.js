@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import '../Modal/ProductModal.css';
+import '../Modal/styleModal/ProductModal.css';
 import { getAllBrand } from "../API/API_Brand";
 import { getCategory } from "../API/API_Category";
 import { addNewProduct } from "../API/API_Product";

@@ -5,6 +5,7 @@ import { success } from "../swal/Swal";
 import ProductModal from "../Modal/ProductModal.js"; // Import component modal
 import { addNewProduct, deleteProduct } from "../API/API_Product.js";
 import UpdateProductModal from "../Modal/UpdateProductModal.js";
+import * as XLSX from "xlsx"; // Import thư viện xlsx
 
 const ProductList = () => {
   const [products, setProducts] = useState({});
@@ -37,12 +38,39 @@ const ProductList = () => {
     fetchProducts();
   }, [Page, limit, keywords]);
 
-
   const handleEditProduct = (product) => {
     setSelectedProduct(product); // Set the selected product
     setIsModalUpdateOpen(true); // Open the modal
   };
-  // console.log('product: ', ProductDetail)
+
+  // Hàm xuất Excel
+  const exportToExcel = async () => {
+    try {
+      const response = await fetch(`http://localhost:3000/products/getProduct?limit=1000&keywords=${keywords || ''}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      const result = await response.json();
+      if (result.status) {
+        const productsData = result.data.data.map((product) => ({
+          "Tên Sản Phẩm": product.name,
+          "Giá": product.price,
+          "Số Lượng Còn": product.currentQuantity,
+          "Ngày Nhập": product.date,
+          "Sẵn Có": product.status !== 5 ? "Còn hàng" : "Hết hàng",
+        }));
+  
+        const worksheet = XLSX.utils.json_to_sheet(productsData);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Products");
+  
+        XLSX.writeFile(workbook, "ProductList.xlsx");
+        success("Đã tải xuống tệp Excel thành công!");
+      }
+    } catch (error) {
+      console.error("Error exporting products:", error);
+    }
+  };
 
   return (
     <div className="background">
@@ -75,7 +103,7 @@ const ProductList = () => {
                 <img className="icon20" src={require('../img/sort.png')} alt="sort" />
                 Bộ lọc
               </button>
-              <button className="btn-download">Tải tất cả</button>
+              <button className="btn-download" onClick={exportToExcel}>Tải tất cả</button>
             </div>
           </div>
 
@@ -102,11 +130,7 @@ const ProductList = () => {
                   </td>
                   <td>
                     <div className="btn-group">
-                      <button className="btn-action edit"
-                        onClick={() => {
-                          handleEditProduct(product)
-                        }}
-                      >
+                      <button className="btn-action edit" onClick={() => handleEditProduct(product)}>
                         <img className="icon24" src={require('../img/edit.png')} alt="edit" />
                       </button>
                       <button className="btn-action delete" onClick={() => deleteProduct(product._id)}>
@@ -119,17 +143,9 @@ const ProductList = () => {
             </tbody>
           </table>
           <div className="pagination">
-            <button onClick={() => {
-              if (Page === 1) return;
-              setPage(Page - 1);
-            }}>Trước</button>
+            <button onClick={() => { if (Page > 1) setPage(Page - 1); }}>Trước</button>
             <span>Trang {Page}/{products?.data?.totalPages}</span>
-            <button onClick={() => {
-              if (Page >= products?.data?.totalPages) return;
-              setPage(Page + 1);
-            }}>
-              Sau
-            </button>
+            <button onClick={() => { if (Page < products?.data?.totalPages) setPage(Page + 1); }}>Sau</button>
           </div>
         </div>
 
@@ -145,8 +161,6 @@ const ProductList = () => {
           setIsModalOpen={(value) => setIsModalUpdateOpen(value)}
           selectedProduct={selectedProduct}
         />
-
-
       </div>
     </div>
   );

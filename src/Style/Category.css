@@ -1,56 +1,82 @@
+/* Container cho danh sách sản phẩm */
 .product-list-container {
-    padding: 20px;
-    background-color: #f9f9f9;
-  }
-  
-  .product-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 20px;
-  }
-  
-  .product-card {
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    padding: 10px;
-    text-align: center;
-  }
-  
-  .btn-add-to-cart {
-    background-color: #f15e2b;
-    color: white;
-    border: none;
-    padding: 10px;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .btn-add-to-cart:hover {
-    background-color: #d45c29;
-  }
-  .modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-  }
-  
-  .modal-content {
-    background-color: white;
-    padding: 15px; /* Giảm padding */
-    border-radius: 5px;
-    width: 300px; /* Giảm chiều rộng */
-    height: 250px;
-  }
-  
-  .modal-actions {
-    display: flex;
-    justify-content: space-between;
-  }
+  padding: 20px;
+  background-color: #f9f9f9; /* Màu nền nhạt cho container */
+}
+
+/* Lưới sản phẩm */
+.product-grid {
+  display: grid; /* Sử dụng grid layout cho sản phẩm */
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Tự động lấp đầy với chiều rộng tối thiểu */
+  gap: 20px; /* Khoảng cách giữa các thẻ sản phẩm */
+}
+/* Hình ảnh trong thẻ sản phẩm */
+.product-image-preview {
+  width: 50px; /* Thiết lập chiều rộng cố định cho hình ảnh */
+  height: 50px; /* Thiết lập chiều cao cố định để tạo sự đồng đều với icon */
+  object-fit: cover; /* Cắt hình ảnh để giữ tỉ lệ */
+  border-radius: 4px; /* Bo tròn góc cho hình ảnh */
+}
+
+/* Thẻ sản phẩm - cải thiện đồng đều và căn chỉnh */
+.product-card {
+  display: flex; /* Sử dụng flexbox */
+  flex-direction: column; /* Sắp xếp theo chiều dọc */
+  align-items: center; /* Căn giữa nội dung */
+  justify-content: space-between; /* Phân bổ không gian giữa các phần tử */
+  height: 100%; /* Đảm bảo chiều cao của thẻ sản phẩm đồng đều */
+  padding: 10px; /* Thêm khoảng đệm cho thẻ sản phẩm */
+}
+
+/* Hiệu ứng hover cho thẻ sản phẩm */
+.product-card:hover {
+  transform: translateY(-5px); /* Nâng thẻ lên khi hover */
+}
+
+/* Nút thêm vào giỏ hàng */
+.btn-add-to-cart {
+  background-color: #f15e2b; /* Màu nền cam */
+  color: white; /* Màu chữ trắng */
+  border: none; /* Không đường viền */
+  padding: 10px; /* Khoảng cách bên trong */
+  border-radius: 5px; /* Bo tròn góc */
+  cursor: pointer; /* Đổi con trỏ thành tay khi hover */
+  font-weight: bold; /* In đậm chữ */
+}
+
+/* Hiệu ứng hover cho nút thêm vào giỏ hàng */
+.btn-add-to-cart:hover {
+  background-color: #d45c29; /* Màu nền tối hơn khi hover */
+}
+
+/* Modal */
+.modal {
+  position: fixed; /* Ghi đè lên toàn bộ trang */
+  top: 0; /* Bắt đầu từ trên cùng */
+  left: 0; /* Bắt đầu từ bên trái */
+  right: 0; /* Kéo dài tới bên phải */
+  bottom: 0; /* Kéo dài tới dưới cùng */
+  background-color: rgba(0, 0, 0, 0.5); /* Nền mờ cho modal */
+  display: flex; /* Sử dụng flexbox */
+  align-items: center; /* Căn giữa theo chiều dọc */
+  justify-content: center; /* Căn giữa theo chiều ngang */
+  z-index: 1000; /* Đảm bảo modal nằm trên các phần tử khác */
+}
+
+/* Nội dung modal */
+.modal-content {
+  background-color: white; /* Màu nền trắng cho nội dung modal */
+  padding: 15px; /* Khoảng cách bên trong */
+  border-radius: 5px; /* Bo tròn góc */
+  width: 300px; /* Chiều rộng cho modal */
+  height: auto; /* Chiều cao tự động */
+  max-height: 80%; /* Chiều cao tối đa để tránh chiếm toàn bộ màn hình */
+  overflow-y: auto; /* Thêm cuộn dọc nếu nội dung quá dài */
+}
+
+/* Hành động trong modal */
+.modal-actions {
+  display: flex; /* Sử dụng flexbox cho các nút hành động */
+  justify-content: space-between; /* Căn giữa khoảng cách giữa các nút */
+  margin-top: 15px; /* Khoảng cách trên */
+}
