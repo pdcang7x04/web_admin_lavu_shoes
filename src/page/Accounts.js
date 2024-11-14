@@ -60,11 +60,13 @@ const Account = () => {
           </div>
         </div>
         <div className="product-container">
-          <div className="table-header">
-            <span className="text_sp">Quản Lý Tài Khoản</span>
+        <div className="table-header">
+            <span className="text_sp">Quản Lý Đơn Hàng</span>
             <div className="button_header">
-              <img className="icon20" src={require('../img/sort.png')} alt="sort" />
-              Bộ lọc
+              <button className="btn-filter">
+                <img className="icon20" src={require('../img/sort.png')} alt="sort" />
+                Bộ lọc
+              </button>
             </div>
           </div>
           <table className="product-table">

@@ -5,6 +5,7 @@ import AddModal from '../Modal/AddOrEditModal';
 import EditModal from '../Modal/UpdateModal';
 import { addNewCategory, deleteCategory, getCategoryByQuery, updateCategory } from '../API/API_Category';
 import { getBrand, addNewBrand, deleteBrand, updateBrand } from '../API/API_Brand';
+import * as XLSX from 'xlsx';  // Import thư viện xlsx
 
 const CategoryAndBrand = () => {
   const [isCategoryPage, setIsCategoryPage] = useState(true);
@@ -77,6 +78,14 @@ const CategoryAndBrand = () => {
     }
   };
 
+  // Hàm để tải dữ liệu dưới dạng Excel
+  const handleDownloadExcel = () => {
+    const ws = XLSX.utils.json_to_sheet(data?.data || []);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+    XLSX.writeFile(wb, 'danh_sach.xlsx');
+  };
+
   return (
     <div className="background">
       <Sidebar />
@@ -103,12 +112,11 @@ const CategoryAndBrand = () => {
             <span className="text_sp">{isCategoryPage ? 'Danh Mục Sản Phẩm' : 'Danh Sách Nhãn Hàng'}</span>
             <div className="button_header">
               <button className="btn-add" onClick={() => setIsModalOpen(true)}>Thêm</button>
-              <button className="btn-download">Tải tất cả</button>
+              <button className="btn-download" onClick={handleDownloadExcel}>Tải tất cả</button> {/* Nút tải Excel */}
               <button onClick={() => setIsCategoryPage(!isCategoryPage)}>
-            {isCategoryPage ? 'Xem nhãn hàng' : 'Xem danh mục'}
-          </button>
+                {isCategoryPage ? 'Xem nhãn hàng' : 'Xem danh mục'}
+              </button>
             </div>
-            
           </div>
           <table className="product-table">
             <thead>
