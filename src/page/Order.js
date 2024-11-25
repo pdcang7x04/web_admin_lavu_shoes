@@ -6,8 +6,6 @@ import { getUserById } from '../API/API_User';
 import { getProductById } from '../API/API_Product';
 import { Alert } from 'bootstrap';
 import { warning } from '../swal/Swal';
-import jsPDF from 'jspdf';
-import 'jspdf-autotable';  // Import thêm để hỗ trợ tạo bảng trong PDF
 
 const Order = () => {
   const [orders, setOrders] = useState([]);
