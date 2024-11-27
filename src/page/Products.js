@@ -72,6 +72,16 @@ const ProductList = () => {
     }
   };
 
+  const statusProduct = (quantity) => {
+    if(quantity == 0) {
+      return "Hết hàng"
+    }
+    if(quantity <= 10){
+      return "Sắp hết hàng"
+    }
+    return "Còn hàng"
+  }
+
   return (
     <div className="background">
       <Sidebar />
@@ -125,8 +135,8 @@ const ProductList = () => {
                   <td>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.price)}</td>
                   <td>{product.currentQuantity} Sản phẩm</td>
                   <td>{product.date}</td>
-                  <td className={product.status !== 5 ? "status-available" : "status-out"}>
-                    {product.status !== 5 ? "Còn hàng" : "Hết hàng"}
+                  <td className={product.currentQuantity > 10 ? "status-available" : "status-out"}>
+                    {statusProduct(product.currentQuantity)}
                   </td>
                   <td>
                     <div className="btn-group">

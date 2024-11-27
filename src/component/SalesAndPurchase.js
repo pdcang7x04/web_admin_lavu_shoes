@@ -41,8 +41,8 @@ const SalesAndPurchase = () => {
                 }
 
                 setMonth(['Aug', 'Sep', ...tempMonths]);  // Spread operator added for correct array formation
-            setSales([30, 52, ...tempSales]);          // Spread operator for sales
-            setPurchase([28, 48, ...tempPurchase]);    // Spread operator for purchases
+            setSales([300000, 520000, ...tempSales]);          // Spread operator for sales
+            setPurchase([280000, 480000, ...tempPurchase]);    // Spread operator for purchases
             setRevenue([1000000, 1500000, ...tempRevenue]); // Example hardcoded values for revenue
             setProfit([200000, 300000, ...tempProfit]);
             }
